@@ -559,8 +559,8 @@ class EDA:
         domain_length = self.df_all.groupby('source')['text_length'].mean().round(1)
 
         # Basic vocabulary differences
-        google_texts = self.df_all[self.df_all['source'] == 'google']['text'].str.cat(sep=' ').lower().split()
-        reddit_texts = self.df_all[self.df_all['source'] == 'reddit']['text'].str.cat(sep=' ').lower().split()
+        google_texts = self.df_all[self.df_all['source'] == 'Google']['text'].str.cat(sep=' ').lower().split()
+        reddit_texts = self.df_all[self.df_all['source'] == 'Reddit']['text'].str.cat(sep=' ').lower().split()
 
         google_vocab = set(google_texts)
         reddit_vocab = set(reddit_texts)
