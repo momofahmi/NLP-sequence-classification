@@ -413,20 +413,13 @@ class EDA:
         return overall, per_variety, per_split
         
     # 8. Sentiment imbalance in whole dataset
-    def sentiment_imbalance(df_all):
-        # Overall imbalance
-        overall = df_all["Sentiment"].value_counts(normalize=True) * 100
-    
-        per_variety = pd.crosstab(df_all["variety"], df_all["Sentiment"], normalize="index") * 100
-    
-        # Per variety per split imbalance
-        per_split = pd.crosstab([df_all["variety"], df_all["split"]],
-                                df_all["Sentiment"],
+    def sentiment_imbalance(self):
+        overall = self.df_all["Sentiment"].value_counts(normalize=True) * 100
+        per_variety = pd.crosstab(self.df_all["variety"], self.df_all["Sentiment"], normalize="index") * 100
+        per_split = pd.crosstab([self.df_all["variety"], self.df_all["split"]],
+                                self.df_all["Sentiment"],
                                 normalize="index") * 100
         return overall, per_variety, per_split
-    
-    #to use this function
-    #sentiment_imbalance(df_all)
 
     def text_length(self, save=False):
         # Add length columns
