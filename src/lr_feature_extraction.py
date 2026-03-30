@@ -37,3 +37,15 @@ def tfidf_features(df_train, df_val, df_test, text_column='clean_text',
     save_npz(f"{save_path}/X_test_tfidf.npz", X_test_tfidf)
 
     return X_train_tfidf, X_val_tfidf, X_test_tfidf, vectorizer
+
+
+def load_tfidf_features(save_path="./tfidf"):
+    #load vectorizer
+    vectorizer = joblib.load(f"{save_path}/tfidf_vectorizer.pkl")
+    
+    # Load TF-IDF matrices
+    X_train = load_npz(f"{save_path}/X_train_tfidf.npz")
+    X_val = load_npz(f"{save_path}/X_val_tfidf.npz")
+    X_test = load_npz(f"{save_path}/X_test_tfidf.npz")
+    
+    return X_train, X_val, X_test, vectorizer
