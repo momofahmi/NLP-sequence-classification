@@ -444,25 +444,6 @@ class EDA:
 
         return variety_length, sentiment_length, sarcasm_length
 
-    def sarcasm_extremes(per_variety):
-        # Find most and least sarcastic varieties
-        most_sarcastic = per_variety[1].idxmax()
-        least_sarcastic = per_variety[1].idxmin()
-    
-        # Get percentages
-        most_sarcastic_pct = per_variety.loc[most_sarcastic, 1]
-        least_sarcastic_pct = per_variety.loc[least_sarcastic, 1]
-    
-        return {
-            'most_sarcastic': most_sarcastic,
-            'most_sarcastic_pct': most_sarcastic_pct,
-            'least_sarcastic': least_sarcastic,
-            'least_sarcastic_pct': least_sarcastic_pct
-        }
-    
-        #to use function,
-        #sarcasm_extremes(per_variety)
-
     def plot_text_length_analysis(self, variety_length, sentiment_length, sarcasm_length, threshold, save=False):
         save_path = "./reports/figures"
         os.makedirs(save_path, exist_ok=True)
@@ -624,3 +605,18 @@ class EDA:
         if save:
             plt.savefig(os.path.join(save_path, "domain_comparison.png"), dpi=150, bbox_inches='tight')
         plt.show()
+
+
+def get_sarcasm_extremes(per_variety):
+    most_sarcastic = per_variety[1].idxmax()
+    least_sarcastic = per_variety[1].idxmin()
+    
+    most_sarcastic_pct = per_variety.loc[most_sarcastic, 1]
+    least_sarcastic_pct = per_variety.loc[least_sarcastic, 1]
+    
+    return {
+        'most_sarcastic': most_sarcastic,
+        'most_sarcastic_pct': most_sarcastic_pct,
+        'least_sarcastic': least_sarcastic,
+        'least_sarcastic_pct': least_sarcastic_pct
+    }
