@@ -5,6 +5,9 @@ import seaborn as sns
 import os
 from collections import Counter
 import warnings
+import spacy
+
+nlp = spacy.load('en_core_web_sm')
 warnings.filterwarnings('ignore')
 
 class EDA:
@@ -606,6 +609,109 @@ class EDA:
             plt.savefig(os.path.join(save_path, "domain_comparison.png"), dpi=150, bbox_inches='tight')
         plt.show()
 
+    def pos_for_sarcasm(self, n_samples=500):
+        sarcastic_texts = self.df_all[self.df_all['Sarcasm'] == 1]['text'].sample(
+            min(n_samples, len(self.df_all[self.df_all['Sarcasm']==1]))
+        ).tolist()
+        
+        non_sarcastic_texts = self.df_all[self.df_all['Sarcasm'] == 0]['text'].sample(
+            min(n_samples, len(self.df_all[self.df_all['Sarcasm']==0]))
+        ).tolist()
+        
+        sarcastic_pos = {}
+        non_sarcastic_pos = {}
+    
+        for text in sarcastic_texts:
+            doc = nlp(text)
+            for token in doc:
+                sarcastic_pos[token.pos_] = sarcastic_pos.get(token.pos_, 0) + 1
+
+        for text in non_sarcastic_texts:
+            doc = nlp(text)
+            for token in doc:
+                non_sarcastic_pos[token.pos_] = non_sarcastic_pos.get(token.pos_, 0) + 1
+        
+        total_sarc = sum(sarcastic_pos.values())
+        total_non = sum(non_sarcastic_pos.values())
+
+        pos_tags = ['NOUN', 'VERB', 'ADJ', 'ADV', 'INTJ', 'PRON', 'ADP']
+        sarc_pcts = [(sarcastic_pos.get(pos, 0) / total_sarc) * 100 for pos in pos_tags]
+        non_pcts = [(non_sarcastic_pos.get(pos, 0) / total_non) * 100 for pos in pos_tags]
+        
+        for pos, sarc_pct, non_pct in zip(pos_tags, sarc_pcts, non_pcts):
+            print(f"{pos:<12} {sarc_pct:.1f}%{' ':<10} {non_pct:.1f}%")
+
+        pos_df = pd.DataFrame({
+            'POS Tag': pos_tags + pos_tags,
+            'Percentage': sarc_pcts + non_pcts,
+            'Type': ['Sarcastic'] * len(pos_tags) + ['Non-sarcastic'] * len(pos_tags)
+        })
+    
+        self.plot_distribution(
+            df=pos_df,
+            column='POS Tag',
+            groupby='Type',
+            title="POS Distribution: Sarcastic vs Non-sarcastic",
+            xlabel="POS Tag",
+            ylabel="Percentage (%)",
+            plot_type='grouped_bar',
+            save=True,
+            save_path="./reports/figures",
+            filename="pos_distribution.png"
+        )
+        
+        return sarcastic_pos, non_sarcastic_pos
+    
+    def sarcastic_phrases_analysis(self):
+        sarcastic_texts = self.df_all[self.df_all['Sarcasm'] == 1]['text']
+
+        patterns = [
+            'yeah right', 'oh great', 'wonderful', 'brilliant', 'thanks a lot', 
+            'as if', 'sure', 'of course', 'how nice', 'how lovely', 'well done',
+            'good job', 'nice one', 'really?', 'seriously?', 'obviously',
+            'tell me about it', 'big surprise', 'what a surprise', 'fantastic'
+        ]
+        
+        found_patterns = []
+        pattern_counts = []
+        
+        for pattern in patterns:
+            count = sarcastic_texts.str.lower().str.contains(pattern).sum()
+            if count > 0:
+                print(f"   '{pattern}': found in {count} sarcastic texts")
+                found_patterns.append(pattern)
+                pattern_counts.append(count)
+
+        if found_patterns:
+            patterns_df = pd.DataFrame({
+                'Pattern': found_patterns,
+                'Count': pattern_counts
+            })
+        else:
+            print("   No common sarcasm patterns found in this dataset")
+            
+        self.plot_distribution(
+            df=patterns_df,
+            column='Pattern',
+            title="Common Sarcasm Patterns",
+            xlabel="Pattern",
+            ylabel="Frequency",
+            plot_type='bar',
+            save=True,
+            save_path="./reports/figures",
+            filename="sarcasm_patterns.png"
+        )
+    
+        
+        examples_by_variety = {}
+        for variety in ['en-AU', 'en-IN', 'en-UK']:
+            examples = self.df_all[(self.df_all['variety'] == variety) & (self.df_all['Sarcasm'] == 1)]['text'].head(3)
+            examples_by_variety[variety] = examples.tolist()
+            for i, ex in enumerate(examples, 1):
+                ex_short = ex[:120] + "..." if len(ex) > 120 else ex
+        
+        return found_patterns, examples_by_variety
+
 
 def get_sarcasm_extremes(per_variety):
     most_sarcastic = per_variety[1].idxmax()
@@ -620,3 +726,59 @@ def get_sarcasm_extremes(per_variety):
         'least_sarcastic': least_sarcastic,
         'least_sarcastic_pct': least_sarcastic_pct
     }
+
+#VARIETY-SPECIFIC SLANG
+def variety_slang(df_all):
+    slang_dictionary = {
+        'en-AU': [
+            'arvo', 'brekkie', 'servo', 'maccas', 'bottle-o', 'esky', 'straya',
+            'ute', 'mate', 'bogan', 'thongs', 'sunnies', 'trackies', 'ambo',
+            'pollie', 'tradie', 'garbo', 'sparky', 'chippy',
+            'footy', 'crikey', 'fair dinkum', 'true blue', 'no worries',
+            'she\'ll be right', 'stoked', 'heaps', 'rack off', 'dunny',
+            'tucker', 'bush tucker', 'yakka', 'snag', 'tinnie', 'bathers',
+            'cossies', 'togs', 'barbie'
+        ],
+
+        'en-IN': [
+            'yaar', 'na', 're', 'bhai', 'acha', 'accha', 'chai', 'jugaad',
+            'arre', 'kya', 'machaa', 'bahut', 'thoda', 'theek', 'hai',
+            'nahi', 'waah', 'abey', 'bhaiya', 'didi',
+            'tension', 'matlab', 'actually', 'basically', 'seriously', 'generally',
+            'only', 'itself', 'too much', 'very much', 'kindly', 'timepass',
+            'prepone', 'passing out', 'cousin brother', 'cousin sister',
+            'batchmate', 'rest is fine', 'do one thing', 'what to do',
+            'chalta hai', 'thoda adjust', 'mind it', 'just now'
+        ],
+
+        'en-UK': [
+
+            'bloody', 'brilliant', 'cheers', 'lorry', 'boot', 'flat', 'mate',
+            'bob', 'chuffed', 'gobsmacked', 'knackered', 'gutted', 'peckish',
+            'bloke', 'bird', 'geezer', 'lad', 'lass', 'chap', 'missus',
+            'innit', 'proper', 'sorted', 'taking the piss', 'fancy', 'quite',
+            'queue', 'telly', 'loo', 'bog', 'cuppa', 'pub',
+            'nowt', 'owt', 'canny', 'bairn', 'wee', 'aye', 'nae', 'ken'
+        ]
+    }
+
+    results = {}
+
+    for en_variety, slang_list in slang_dictionary.items():
+        en_variety_texts = df_all[df_all['variety'] == en_variety]['text'].str.lower()
+
+        slang_found = []
+        for slang in slang_list:
+            matches = en_variety_texts[en_variety_texts.str.contains(slang, na=False)]
+            if len(matches) > 0:
+                example = matches.iloc[0]
+                slang_found.append((slang, example))
+
+        results[en_variety] = slang_found
+        if slang_found:
+            for slang, example in slang_found[:5]:
+                example_short = example[:100] + "..." if len(example) > 100 else example
+        else:
+            print("   No slang examples found")
+
+    return results
