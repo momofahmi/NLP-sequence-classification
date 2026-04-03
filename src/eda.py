@@ -637,17 +637,12 @@ class EDA:
         pos_tags = ['NOUN', 'VERB', 'ADJ', 'ADV', 'INTJ', 'PRON', 'ADP']
         sarc_pcts = [(sarcastic_pos.get(pos, 0) / total_sarc) * 100 for pos in pos_tags]
         non_pcts = [(non_sarcastic_pos.get(pos, 0) / total_non) * 100 for pos in pos_tags]
-        
-        for pos, sarc_pct, non_pct in zip(pos_tags, sarc_pcts, non_pcts):
-            print(f"{pos:<12} {sarc_pct:.1f}%{' ':<10} {non_pct:.1f}%")
-
-        pos_df = pd.DataFrame({
-            'POS Tag': pos_tags + pos_tags,
-            'Percentage': sarc_pcts + non_pcts,
-            'Type': ['Sarcastic'] * len(pos_tags) + ['Non-sarcastic'] * len(pos_tags)
-        })
     
-        return sarcastic_pos, non_sarcastic_pos
+        return {
+            'pos_tags': pos_tags,
+            'sarcastic_pcts': sarc_pcts,
+            'non_sarcastic_pcts': non_pcts
+        }, sarcastic_pos, non_sarcastic_pos
     
     def sarcastic_phrases_analysis(self):
         sarcastic_texts = self.df_all[self.df_all['Sarcasm'] == 1]['text']
@@ -668,23 +663,17 @@ class EDA:
                 print(f"   '{pattern}': found in {count} sarcastic texts")
                 found_patterns.append(pattern)
                 pattern_counts.append(count)
-
-        if found_patterns:
-            patterns_df = pd.DataFrame({
-                'Pattern': found_patterns,
-                'Count': pattern_counts
-            })
-        else:
-            print("   No common sarcasm patterns found in this dataset")
         
         examples_by_variety = {}
         for variety in ['en-AU', 'en-IN', 'en-UK']:
-            examples = self.df_all[(self.df_all['variety'] == variety) & (self.df_all['Sarcasm'] == 1)]['text'].head(3)
-            examples_by_variety[variety] = examples.tolist()
-            for i, ex in enumerate(examples, 1):
-                ex_short = ex[:120] + "..." if len(ex) > 120 else ex
-        
-        return found_patterns, examples_by_variety
+            examples = self.df_all[(self.df_all['variety'] == variety) & (self.df_all['Sarcasm'] == 1)]['text'].head(3).tolist()
+            examples_by_variety[variety] = [ex[:120] + "..." if len(ex) > 120 else ex for ex in examples]
+
+        return {
+            'found_patterns': found_patterns,
+            'pattern_counts': pattern_counts
+        }, examples_by_variety
+
 
 
 def get_sarcasm_extremes(per_variety):
