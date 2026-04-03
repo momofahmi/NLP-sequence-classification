@@ -647,19 +647,6 @@ class EDA:
             'Type': ['Sarcastic'] * len(pos_tags) + ['Non-sarcastic'] * len(pos_tags)
         })
     
-        self.plot_distribution(
-            df=pos_df,
-            column='POS Tag',
-            groupby='Type',
-            title="POS Distribution: Sarcastic vs Non-sarcastic",
-            xlabel="POS Tag",
-            ylabel="Percentage (%)",
-            plot_type='grouped_bar',
-            save=True,
-            save_path="./reports/figures",
-            filename="pos_distribution.png"
-        )
-        
         return sarcastic_pos, non_sarcastic_pos
     
     def sarcastic_phrases_analysis(self):
@@ -689,19 +676,6 @@ class EDA:
             })
         else:
             print("   No common sarcasm patterns found in this dataset")
-            
-        self.plot_distribution(
-            df=patterns_df,
-            column='Pattern',
-            title="Common Sarcasm Patterns",
-            xlabel="Pattern",
-            ylabel="Frequency",
-            plot_type='bar',
-            save=True,
-            save_path="./reports/figures",
-            filename="sarcasm_patterns.png"
-        )
-    
         
         examples_by_variety = {}
         for variety in ['en-AU', 'en-IN', 'en-UK']:
