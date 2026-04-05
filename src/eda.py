@@ -417,11 +417,53 @@ class EDA:
         
     # 8. Sentiment imbalance in whole dataset
     def sentiment_imbalance(self):
+         self.df_all["Sarcasm"] = self.df_all["Sentiment"].astype(int)
         overall = self.df_all["Sentiment"].value_counts(normalize=True) * 100
+
+        self.plot_distribution(
+            df=self.df_all,
+            column='Sentiment',
+            title="Sentiment Distribution (Overall)",
+            plot_type='pie',
+            save=True,
+            filename="sentiment_overall.png"
+        )
+
+        # Per variety imbalance
         per_variety = pd.crosstab(self.df_all["variety"], self.df_all["Sentiment"], normalize="index") * 100
+
+        self.plot_distribution(
+            df=self.df_all,
+            column='variety',
+            groupby='Sentiment',
+            title="Sentiment Distribution by Variety",
+            xlabel="Variety",
+            ylabel="Percentage (%)",
+            plot_type='grouped_bar',
+            save=True,
+            filename="sentiment_by_variety.png"
+        )
+
+        # Per variety per split imbalance
         per_split = pd.crosstab([self.df_all["variety"], self.df_all["split"]],
                                 self.df_all["Sentiment"],
                                 normalize="index") * 100
+
+        # Create combined column for plotting
+        df_temp = self.df_all.copy()
+        df_temp['variety_split'] = df_temp['variety'] + "\n(" + df_temp['split'] + ")"
+
+        self.plot_distribution(
+            df=df_temp,
+            column='variety_split',
+            groupby='Sentiment',
+            title="Sentiment Distribution by Variety and Split",
+            xlabel="Variety (Split)",
+            ylabel="Percentage (%)",
+            plot_type='grouped_bar',
+            save=True,
+            filename="sentiment_by_variety_split.png"
+        )
         return overall, per_variety, per_split
 
     def text_length(self, save=False):
