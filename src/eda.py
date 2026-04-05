@@ -417,7 +417,7 @@ class EDA:
         
     # 8. Sentiment imbalance in whole dataset
     def sentiment_imbalance(self):
-         self.df_all["Sarcasm"] = self.df_all["Sentiment"].astype(int)
+        self.df_all["Sarcasm"] = self.df_all["Sentiment"].astype(int)
         overall = self.df_all["Sentiment"].value_counts(normalize=True) * 100
 
         self.plot_distribution(
