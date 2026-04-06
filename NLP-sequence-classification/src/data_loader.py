@@ -41,7 +41,7 @@ def get_inner_circle_pool(ds, split: str):
     "Groups UK and AU samples"
     return ds[split].filter(lambda x: x["variety"] in ["en-UK", "en-AU"])
 
-def get_train_conditions(ds, split:str):
+def get_train_conditions(ds):
     "Returns the 5 trains splits needed in a dictionary format"
     return {
         "uk_only" : get_variety_split(ds, "en-UK", "train"),
@@ -51,7 +51,7 @@ def get_train_conditions(ds, split:str):
         "all": get_all_varieties(ds, "train")
     }
 
-def get_test_conditions(ds, split:str):
+def get_test_conditions(ds):
     "Returns the 5 trains splits needed in a dictionary format"
     return {
         "uk_only" : get_variety_split(ds, "en-UK", "test"),
