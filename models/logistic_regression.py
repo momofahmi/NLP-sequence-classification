@@ -5,6 +5,7 @@ Desc: Updated Linear Regression model
 '''
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 import joblib
 import numpy as np
 
