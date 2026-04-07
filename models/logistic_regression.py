@@ -40,7 +40,7 @@ class LogisticRegressionModel:
         
     #function to make prediction on test data after training model
     #output 0/1 for each task
-    def prediction_logistic_regression(sekf, X_test):
+    def prediction_logistic_regression(self, X_test):
         if self.is_trained == False:
             raise ValueError("Model not trained yet")
 
