@@ -47,8 +47,8 @@ class LogisticRegressionModel:
 
         lr_predictions = self.model.predict(X_test)
         return {
-            'sarcasm': lr_predictions[:, 0],
-            'sentiment': lr_predictions[:, 1]
+            'Sarcasm': lr_predictions[:, 0],
+            'Sentiment': lr_predictions[:, 1]
         }
 
     #function to predict probabilites to illustrate confidence of model
@@ -60,8 +60,8 @@ class LogisticRegressionModel:
         logistic_regression_probabilities = self.model.predict_proba(X_test)
         
         return {
-            'sarcasm': logistic_regression_probabilities[0],  
-            'sentiment': logistic_regression_probabilities[1]
+            'Sarcasm': logistic_regression_probabilities[0],  
+            'Sentiment': logistic_regression_probabilities[1]
         }
 
     #evaluation function - metrics accuracy, F1, precision and recall
