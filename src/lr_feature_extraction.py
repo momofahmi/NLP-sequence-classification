@@ -14,7 +14,7 @@ def tfidf_features(df_train, df_validation, df_test, text_column='text',
     #vectorizer initialisation with parameters
     vectorizer = TfidfVectorizer(
         max_features=max_features,
-        ngram_range=(1, 3), # unigrams and bigrams
+        ngram_range=(1, 2), # unigrams and bigrams
         stop_words='english', # all stopwords ignoreed
         min_df=2,     # rare words ignored /
         max_df=0.95,    # common words ignored / appears in almost all instances
