@@ -53,15 +53,15 @@ class LogisticRegressionModel:
     #function to predict probabilites to illustrate confidence of model
     #output probabilities
     def predict_probabilities_logistic_regression(self, X_test):
-    if self.is_trained == False:
-        raise ValueError("Model not trained yet.")
-    
-    logistic_regression_probabilities = self.model.predict_proba(X_test)
-    
-    return {
-        'sarcasm': logistic_regression_probabilities[0],  
-        'sentiment': logistic_regression_probabilities[1]
-    }
+        if self.is_trained == False:
+            raise ValueError("Model not trained yet.")
+        
+        logistic_regression_probabilities = self.model.predict_proba(X_test)
+        
+        return {
+            'sarcasm': logistic_regression_probabilities[0],  
+            'sentiment': logistic_regression_probabilities[1]
+        }
 
     #evaluation function - metrics accuracy, F1, precision and recall
     def evaluate_logistic_regression(self, X_test, y_test_df):
