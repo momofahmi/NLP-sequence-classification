@@ -8,16 +8,18 @@ import joblib
 import os
 
 def tfidf_features(df_train, df_validation, df_test, text_column='text',
-                   max_features=5000, save_path="./tfidf"):
+                   max_features=15000, save_path="./tfidf"):
 
     os.makedirs(save_path, exist_ok=True)
     #vectorizer initialisation with parameters
     vectorizer = TfidfVectorizer(
         max_features=max_features,
-        ngram_range=(1, 2), # unigrams and bigrams
+        ngram_range=(1, 3), # unigrams and bigrams
         stop_words='english', # all stopwords ignoreed
         min_df=2,     # rare words ignored /
-        max_df=0.95    # common words ignored / appears in almost all instances
+        max_df=0.95,    # common words ignored / appears in almost all instances
+        use_idf=True,
+        smooth_idf=True
     )
 
     #fit transform only on training data
