@@ -17,8 +17,8 @@ class LogisticRegressionModel:
             'max_iter': 1000,
             'random_state': 42
         }
-        if lr_params is None:
-            lr_params = default_lr
+        if lr_parameters is None:
+            lr_parameters = default_lr
             
         self.model = MultiOutputClassifier(LogisticRegression(**lr_parameters)) 
         self.is_trained = False #keep track of whether model has been trained or not
