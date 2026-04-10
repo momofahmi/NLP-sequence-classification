@@ -1,9 +1,3 @@
-"""
-Omar - Vocabulary Analysis (Section 1.2 Requirement)
-Builds variety vocabularies, computes Jaccard & TF-IDF cosine similarities,
-and generates a heatmap of cross-variety similarity.
-"""
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,9 +22,8 @@ class VocabularyAnalysis:
         self.varieties = sorted(df_all[variety_col].unique())
         self.vocab_per_variety: dict[str, set] = {}
 
-    # ------------------------------------------------------------------
     # 1. Build per-variety vocabularies
-    # ------------------------------------------------------------------
+    
     def build_vocabularies(self) -> dict[str, set]:
         """Build a set of unique lowercased tokens for each variety."""
         for variety in self.varieties:
@@ -48,9 +41,8 @@ class VocabularyAnalysis:
 
         return self.vocab_per_variety
 
-    # ------------------------------------------------------------------
     # 2. Jaccard similarity
-    # ------------------------------------------------------------------
+    
     @staticmethod
     def jaccard(set_a: set, set_b: set) -> float:
         if not set_a or not set_b:
@@ -76,8 +68,7 @@ class VocabularyAnalysis:
 
         print("\nJaccard similarity matrix:")
         print(df_jac.round(4))
-
-        # Pairwise readable output
+       
         print("\nPairwise Jaccard scores:")
         pairs = [
             ('en-AU', 'en-IN'),
@@ -91,9 +82,9 @@ class VocabularyAnalysis:
 
         return df_jac
 
-    # ------------------------------------------------------------------
+ 
     # 3. TF-IDF cosine similarity
-    # ------------------------------------------------------------------
+    
     def compute_tfidf_cosine_matrix(self) -> pd.DataFrame:
         """
         Concatenate all texts per variety into one document,
@@ -125,9 +116,8 @@ class VocabularyAnalysis:
 
         return df_cos
 
-    # ------------------------------------------------------------------
     # 4. Heatmap of both similarities
-    # ------------------------------------------------------------------
+    
     def plot_similarity_heatmap(self, df_jac: pd.DataFrame,
                                  df_cos: pd.DataFrame, save: bool = True):
         """Side-by-side heatmaps for Jaccard and TF-IDF cosine similarity."""
@@ -138,14 +128,14 @@ class VocabularyAnalysis:
             [df_jac, df_cos],
             ['Jaccard similarity', 'TF-IDF cosine similarity']
         ):
-            mask = np.eye(len(df_sim), dtype=bool)  # hide diagonal
+            mask = np.eye(len(df_sim), dtype=bool)  
             sns.heatmap(
                 df_sim, annot=True, fmt='.3f', cmap='Blues',
                 vmin=0, vmax=1, ax=ax,
                 linewidths=0.5, linecolor='white',
                 mask=mask, annot_kws={'size': 11}
             )
-            # Show diagonal as 1.0 in grey
+            
             for k in range(len(df_sim)):
                 ax.text(k + 0.5, k + 0.5, '1.000',
                         ha='center', va='center', fontsize=11, color='grey')
@@ -163,9 +153,8 @@ class VocabularyAnalysis:
 
         plt.show()
 
-    # ------------------------------------------------------------------
     # 5. Run full analysis
-    # ------------------------------------------------------------------
+   
     def run(self, save: bool = True):
         print("=" * 55)
         print("VOCABULARY ANALYSIS")
