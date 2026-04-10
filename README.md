@@ -23,6 +23,7 @@ Notes for Colab:
 - **Private GitHub repo:** Colab cannot clone without credentials.
   - In Colab: sidebar **key icon → Secrets** → add a secret whose **name is exactly** `GITHUB_TOKEN` (the label you gave the token on GitHub does not matter). Paste the `ghp_…` value. **Turn on “Notebook access”** for that secret, or the code cannot read it.
   - Your GitHub account must **already have read access** to that private repo (collaborator). A token only proves *you*; it does not unlock someone else’s private repo. If needed, fork the repo to your account and set environment variable `GITHUB_REPO=YourUser/NLP-sequence-classification` (and optionally `REPO_BRANCH=fiyin/model-pipeline`).
+  - Colab notebooks **clone branch `fiyin/model-pipeline` by default** (so `src/besstie_data_loader.py` exists). To use `main` instead, set environment variable `REPO_BRANCH` to empty or to `main`.
   - **Zip:** Colab has no “upload folder” button. On your laptop zip the project into **one file**, then in Colab open the **Files** tab (folder icon) → **upload** → choose that `.zip`. Name it `NLP-sequence-classification.zip` or set `REPO_ZIP` to its path under `/content/`.
 - **Uploading only the `.ipynb` file is not enough** — you need `src/`, `requirements.txt`, and the rest of the repo (or a successful clone).
 
