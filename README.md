@@ -18,8 +18,10 @@ Colab links target branch **`fiyin/model-pipeline`** (merge to `main` later and 
 
 Notes for Colab:
 - Use a GPU runtime: `Runtime -> Change runtime type -> GPU`
-- First cell should install dependencies: `!pip install -r requirements.txt`
+- The first cell clones the repo and runs `pip install -r requirements.txt` from the project root.
 - Dataset loads from Hugging Face: `load_dataset("surrey-nlp/BESSTIE-CW-26")`
+- **Private GitHub repo:** Colab cannot clone without credentials. Either make the repo public, or in Colab add a secret named **`GITHUB_TOKEN`** (classic personal access token with **repo** read access) so notebook `2.2` can clone. Alternatively zip the full project locally, upload `NLP-sequence-classification.zip` to Colab’s file browser, then re-run the first cell (it will unzip and detect `src/`).
+- **Uploading only the `.ipynb` file is not enough** — you need `src/`, `requirements.txt`, and the rest of the repo (or a successful clone).
 
 ## Setup
 ```bash
