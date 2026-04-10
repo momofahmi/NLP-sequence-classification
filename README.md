@@ -2,6 +2,8 @@
 **BESSTIE: Sentiment & Sarcasm Classification across English Varieties**  
 University of Surrey, Semester 2, 2026
 
+**Coursework checklist (tick in-repo):** [docs/COURSEWORK_CHECKLIST.md](docs/COURSEWORK_CHECKLIST.md)
+
 ## Colab
 Open in Colab (branch `fiyin/model-pipeline`):
 
@@ -11,7 +13,8 @@ Open in Colab (branch `fiyin/model-pipeline`):
 - [2.3 LoRA](https://colab.research.google.com/github/momofahmi/NLP-sequence-classification/blob/fiyin/model-pipeline/notebooks/2.3_LoRA_Adapters_Mohamed.ipynb)
 
 Use a **GPU** runtime. The first code cell in the training notebooks clones the repo and runs `pip install -r requirements.txt`. The BESSTIE dataset loads from Hugging Face: `surrey-nlp/BESSTIE-CW-26`.  
-For a **private** GitHub repo, add a Colab secret **`GITHUB_TOKEN`** (classic PAT with `repo` scope) and enable notebook access for it, or upload a project zip to `/content/`. Optional env: **`GITHUB_REPO`** (`owner/repo`) and **`REPO_BRANCH`**.
+For a **private** GitHub repo, add a Colab secret **`GITHUB_TOKEN`** (classic PAT with `repo` scope) and enable notebook access for it, or upload a project zip to `/content/`. Optional env: **`GITHUB_REPO`** (`owner/repo`) and **`REPO_BRANCH`**.  
+Notebooks **2.2** (RoBERTa) and **2.3** (LoRA) support **`DEMO_MODE`**: default is fast demo; set **`DEMO_MODE=0`** before running for full experiments (see checklist).
 
 ## Local setup
 ```bash
