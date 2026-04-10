@@ -1,13 +1,14 @@
+# Mohamed Fahmi Ahmed
+
 import os
+import sys
 import torch
 from dataclasses import dataclass
-from typing import Optional
 
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
     TrainingArguments,
-    EarlyStoppingCallback,
 )
 from peft import (
     LoraConfig,
@@ -16,283 +17,186 @@ from peft import (
     PeftModel,
 )
 
-
 SUPPORTED_MODELS = {
-    "llama-1b" : "meta-llama/Llama-3.2-1B",  
-    "llama-3b" : "meta-llama/Llama-3.2-3B",   
-    "opt-1.3b" : "facebook/opt-1.3b", 
+    "llama-1b" : "meta-llama/Llama-3.2-1B",   
+    "llama-3b" : "meta-llama/Llama-3.2-3B",  
+    "opt-1.3b" : "facebook/opt-1.3b",         
+    "opt-125m" : "facebook/opt-125m",         
 }
 
-VARIETIES = ["en-UK", "en-AU", "en-IN"]
-
+VARIETIES   = ["en-UK", "en-AU", "en-IN"]
 HF_USERNAME = "momofahmi"
 
 
-# LoRA configuration
+# LoRA Configuration
 @dataclass
 class LoRAConfig:
-    r: int = 8 
-
-    lora_alpha: int = 16
-
-    lora_dropout: float = 0.1
-
-    target_modules: list = None
-
-    task_type: TaskType = TaskType.SEQ_CLS
-
-    # false during training to make mistake
-    inference_mode: bool = False
+    r              : int   = 8
+    lora_alpha     : int   = 16
+    lora_dropout   : float = 0.1
+    target_modules : list  = None
+    task_type      : TaskType = TaskType.SEQ_CLS
+    inference_mode : bool  = False
 
     def __post_init__(self):
         if self.target_modules is None:
             self.target_modules = ["q_proj", "v_proj"]
-    
-    # convert to PEFT 
+
     def to_peft_config(self) -> LoraConfig:
+        # convert to HuggingFace PEFT LoraConfig object
         return LoraConfig(
-            r               = self.r,
-            lora_alpha      = self.lora_alpha,
-            lora_dropout    = self.lora_dropout,
-            target_modules  = self.target_modules,
-            task_type       = self.task_type,
-            inference_mode  = self.inference_mode,
-            bias            = "none", 
+            r              = self.r,
+            lora_alpha     = self.lora_alpha,
+            lora_dropout   = self.lora_dropout,
+            target_modules = self.target_modules,
+            task_type      = self.task_type,
+            inference_mode = self.inference_mode,
+            bias           = "none",
         )
 
 
-# model loading
+# model loading 
 def load_model(
-    model_key : str,
-    num_labels: int = 2, # label possible
-    device_map: str = "auto",
+    model_key  : str,
+    num_labels : int = 2,
+    device_map : str = "auto",
 ) -> tuple:
-   
+  
     if model_key not in SUPPORTED_MODELS:
         raise ValueError(
-            f"Unknown model key '{model_key}'")
+            f"Unknown model '{model_key}'. "
+            f"Choose from: {list(SUPPORTED_MODELS.keys())}"
+        )
 
     model_id = SUPPORTED_MODELS[model_key]
     print(f"[load_model] Loading {model_id}")
 
     tokenizer = AutoTokenizer.from_pretrained(model_id)
 
-    # decoder models don't have a pad token by default so eos token
+    # add pad token to decoder models 
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-        print("[load_model] Set pad_token = eos_token (required for decoder models)")
+        print("[load_model] Set pad_token = eos_token (decoder model fix)")
 
-    # load the model 
     model = AutoModelForSequenceClassification.from_pretrained(
         model_id,
         num_labels = num_labels,
         device_map = device_map,
-        dtype = torch.float16 if torch.cuda.is_available() else torch.float32,
+        dtype      = torch.float16 if torch.cuda.is_available() else torch.float32,
     )
 
     model.config.pad_token_id = tokenizer.pad_token_id
 
-    total_params = sum(p.numel() for p in model.parameters())
+    total = sum(p.numel() for p in model.parameters())
     print(f"[load_model] Loaded {model_id}")
-    print(f"[load_model] Total parameters: {total_params / 1e9:.2f}B")
+    print(f"[load_model] Total parameters: {total/1e9:.2f}B")
 
     return model, tokenizer
 
-# freeze base model and apply LoRA adapters
+
+# apply LoRA 
 def apply_lora(model, lora_config: LoRAConfig = None) -> object:
-  
+    
     if lora_config is None:
         lora_config = LoRAConfig()
 
-    peft_config = lora_config.to_peft_config()
-    model = get_peft_model(model, peft_config)
+    model = get_peft_model(model, lora_config.to_peft_config())
+
+    # cast adapter params to float32 for stable gradient computation
+    # base model stays float16 (saves VRAM), only trainable A and B go to float32
+    for param in model.parameters():
+        if param.requires_grad:
+            param.data = param.data.float()
 
     model.print_trainable_parameters()
-
     return model
 
 
 # tokenisation 
-def tokenize_dataset(dataset, tokenizer, label_col: str = "Sarcasm", max_length: int = 128):
-
+def tokenize_dataset(
+    dataset,
+    tokenizer,
+    label_col  : str = "Sarcasm",
+    max_length : int = 128,
+):
+    
     def tokenize_fn(examples):
-        tokenized = tokenizer(
+        out = tokenizer(
             examples["text"],
             truncation = True,
             padding    = "max_length",
             max_length = max_length,
         )
-        # create labels column
-        tokenized["labels"] = [int(l) for l in examples[label_col]]
-        return tokenized
+        # huggingFace trainer looks for 'labels' column specifically
+        out["labels"] = [int(l) for l in examples[label_col]]
+        return out
 
-    # remove original columns (keep only what the model needs)
     cols_to_remove = [c for c in dataset.column_names if c != label_col]
     tokenized = dataset.map(tokenize_fn, batched=True, remove_columns=cols_to_remove)
-    tokenized = tokenized.remove_columns([label_col]) # remove original label column after creating labels
+    tokenized = tokenized.remove_columns([label_col])
     tokenized.set_format("torch")
-
     return tokenized
 
 
-# training arguments
+# training arguments 
 def training_args(
     output_dir : str,
     variety    : str,
-    seed       : int = 42,
-    epochs     : int = 3,
-    batch_size : int = 8,
+    seed       : int   = 42,
+    epochs     : int   = 3,
+    batch_size : int   = 8,
     lr         : float = 2e-4,
 ) -> TrainingArguments:
-    
+   
     return TrainingArguments(
-        output_dir = output_dir,  #lora adapters will be saved here
-        num_train_epochs = epochs,
+        output_dir                  = output_dir,
+        num_train_epochs            = epochs,
         per_device_train_batch_size = batch_size,
-        per_device_eval_batch_size  = batch_size * 2,  # eval can use larger batch
-        learning_rate = lr,
-        seed = seed,
-
-        # evaluate at end of each epoch to track learning curve
-        eval_strategy = "epoch",
-        save_strategy = "epoch",
-
-        # keep the best checkpoint not just the last one
-        load_best_model_at_end = True,
-        metric_for_best_model = "eval_loss",
-        greater_is_better = False,
-
-        # logging
-        logging_dir = f"{output_dir}/logs",
-        logging_steps = 10,
-        run_name = f"lora-{variety}-seed{seed}",
-
-        fp16 = torch.cuda.is_available(),
-
-        # don't push to hub automatically during training
-        push_to_hub = False,
-
-        # remove unused columns automatically
-        remove_unused_columns = False,
-
+        per_device_eval_batch_size  = batch_size * 2,
+        learning_rate               = lr,
+        seed                        = seed,
+        eval_strategy               = "epoch",
+        save_strategy               = "epoch",
+        load_best_model_at_end      = True,
+        metric_for_best_model       = "eval_loss",
+        greater_is_better           = False,
+        logging_steps               = 10,
+        run_name                    = f"lora-{variety}-seed{seed}",
+        fp16                        = torch.cuda.is_available(),
+        push_to_hub                 = False,
+        remove_unused_columns       = False,
     )
 
 
-# adapter saving and loading
+# adapter 
 def save_adapter(model, variety: str, output_dir: str = "./adapters"):
-    
-    save_path = os.path.join(output_dir, variety.replace("-", "_"))
-    model.save_pretrained(save_path)
-    print(f"[save_adapter] Adapter saved to {save_path}")
-    print(f"[save_adapter] Size: {get_size(save_path):.1f} MB")
+    path = os.path.join(output_dir, variety.replace("-", "_"))
+    model.save_pretrained(path)
+    print(f"[save_adapter] Saved to {path} ({get_size(path):.1f} MB)")
 
 
-
-def load_adapter(base_model, variety: str, adapter_dir: str = "./adapters"):
-   
-    adapter_path = os.path.join(adapter_dir, variety.replace("-", "_"))
+def load_adapter(base_model, adapter_path: str):
     model = PeftModel.from_pretrained(base_model, adapter_path)
     model.eval()
-    print(f"[load_adapter] Loaded adapter for {variety} from {adapter_path}")
+    print(f"[load_adapter] Loaded from {adapter_path}")
     return model
 
 
-def push_adapter_to_hub(model, variety: str, hf_username: str = HF_USERNAME):
-    
-    repo_name = f"besstie-lora-{variety.lower()}"
-    hub_path  = f"{hf_username}/{repo_name}"
-
-    print(f"[push_adapter_to_hub] Pushing to {hub_path}...")
-    model.push_to_hub(hub_path)
+def push_adapter_to_hub(model, tokenizer, variety: str, model_key: str):
+    repo = f"{HF_USERNAME}/besstie-lora-{variety.lower()}-{model_key}"
+    print(f"[push_adapter_to_hub] Pushing to {repo}...")
+    model.push_to_hub(repo)
+    tokenizer.push_to_hub(repo)
     print(f"[push_adapter_to_hub] Done — load with:")
-    print(f"  PeftModel.from_pretrained(base_model, '{hub_path}')")
+    print(f"  PeftModel.from_pretrained(base_model, '{repo}')")
 
 
-#return size of directory in MB
 def get_size(path: str) -> float:
+    #return directory size in MB
     total = 0
-    for dirpath, _, filenames in os.walk(path):
-        for f in filenames:
+    for dirpath, _, files in os.walk(path):
+        for f in files:
             total += os.path.getsize(os.path.join(dirpath, f))
     return total / (1024 * 1024)
 
 
-
-if __name__ == "__main__":
-    import sys
-    sys.path.append("..")  
-
-    from datasets import load_dataset
-    from src.functions_to_use import class_weights, new_weighted_class
-
-    from dotenv import load_dotenv
-    from huggingface_hub import login
-
-    load_dotenv()
-    hf_token = os.getenv("HF_TOKEN")
-    if hf_token:
-        login(token=hf_token)
-    else:
-        login()
-
-    MODEL_KEY  = "llama-3b"  
-    VARIETY    = "en-UK"
-    TASK       = "Sarcasm"
-    MAX_LENGTH = 128
-    SEED       = 42
-
-    print("="*55)
-    print("LoRA adapter — quick training test")
-    print(f"Model   : {MODEL_KEY}")
-    print(f"Variety : {VARIETY}")
-    print(f"Task    : {TASK}")
-    print("="*55)
-
-    # load data
-    print("\n[1/5] Loading dataset...")
-    ds = load_dataset("surrey-nlp/BESSTIE-CW-26")
-    train = ds["train"].filter(lambda x: x["variety"] == VARIETY)
-    val   = ds["validation"].filter(lambda x: x["variety"] == VARIETY)
-
-    print(f"   train: {len(train)} examples (reduced for test)")
-    print(f"   val  : {len(val)} examples")
-
-    # load model
-    print("\n[2/5] Loading base model...")
-    model, tokenizer = load_model(MODEL_KEY, num_labels=2)
-
-    # apply lora 
-    print("\n[3/5] Applying LoRA...")
-    model = apply_lora(model, LoRAConfig())
-
-    # tokenize 
-    print("\n[4/5] Tokenizing...")
-    train_tok = tokenize_dataset(train, tokenizer, TASK, MAX_LENGTH)
-    val_tok   = tokenize_dataset(val,   tokenizer, TASK, MAX_LENGTH)
-
-    # train 
-    print("\n[5/5] Training (1 epoch)...")
-    weights         = class_weights(train, TASK)
-    WeightedTrainer = new_weighted_class(weights)
-
-    args = training_args(
-        output_dir = "./test_adapter",
-        variety    = VARIETY,
-        seed       = SEED,
-        epochs     = 3,      
-        batch_size = 8,     
-        lr         = 2e-4,
-    )
-
-    trainer = WeightedTrainer(
-        model         = model,
-        args          = args,
-        train_dataset = train_tok,
-        eval_dataset  = val_tok,
-    )
-
-    trainer.train()
-
-    print("\nTest complete.")
-    print("If you got here without errors the full pipeline works.")
-    print("Adapter saved to ./test_adapter/")
