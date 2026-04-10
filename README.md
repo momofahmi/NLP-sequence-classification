@@ -16,6 +16,10 @@ Open notebooks directly in Google Colab (fastest for group members).
 
 Colab links target branch **`fiyin/model-pipeline`** (merge to `main` later and switch URLs if needed).
 
+**Opening from GitHub:** Colab only loads that **one `.ipynb` file** from the URL (the correct branch/path you picked). It does **not** automatically download `src/`, `requirements.txt`, or the rest of the repo. The **first code cell** is what clones the repo (or uses your uploaded zip) so the notebook can import `src` and install dependencies.
+
+**“May request access to your data stored with Google”:** That is Colab’s standard warning for any notebook loaded from an external site (GitHub). It means *the code in the cells you run* could ask for Drive or other permissions—so you should skim the notebook, especially the setup cells. For these course notebooks, the main actions are `git clone`, `pip install`, and Hugging Face dataset download—not hidden Drive access unless you add it yourself.
+
 Notes for Colab:
 - Use a GPU runtime: `Runtime -> Change runtime type -> GPU`
 - The first cell clones the repo and runs `pip install -r requirements.txt` from the project root.
