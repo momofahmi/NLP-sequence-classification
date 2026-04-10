@@ -29,5 +29,11 @@ data/raw/
 .DS_Store
 Thumbs.db
 
+# IDE
+.idea/
+
 # Report 
 report/*.pdf
+
+# Large TF-IDF sparse matrices (regenerate from notebook 2.1 / tfidf_feature_extraction)
+models/tfidf/X_*_tfidf.npz

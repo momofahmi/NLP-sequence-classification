@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-04-10 15:22:17",
+  "baseline_tfidf_logreg": {
+    "val": {
+      "sarcasm": {
+        "accuracy": 0.7827476038338658,
+        "f1": 0.423728813559322,
+        "precision": 0.33783783783783783,
+        "recall": 0.5681818181818182
+      },
+      "sentiment": {
+        "accuracy": 0.8434504792332268,
+        "f1": 0.8414239482200647,
+        "precision": 0.8333333333333334,
+        "recall": 0.8496732026143791
+      }
+    },
+    "test": {
+      "sarcasm": {
+        "accuracy": 0.7700412276683463,
+        "f1": 0.4066193853427896,
+        "precision": 0.3179297597042514,
+        "recall": 0.5639344262295082
+      },
+      "sentiment": {
+        "accuracy": 0.8190563444800733,
+        "f1": 0.8121730860675226,
+        "precision": 0.8235294117647058,
+        "recall": 0.801125703564728
+      }
+    }
+  },
+  "vocab_overlap": {
+    "jaccard": {
+      "en-AU_en-IN": 0.224241,
+      "en-AU_en-UK": 0.268379,
+      "en-IN_en-UK": 0.236439
+    },
+    "tfidf_cosine": {
+      "en-AU_en-IN": 0.748179,
+      "en-AU_en-UK": 0.887002,
+      "en-IN_en-UK": 0.802671
+    },
+    "figure": "reports/figures/q1_2_vocabulary_similarity_heatmap.png"
+  },
+  "roberta_smoke_sarcasm_train_en-UK": {
+    "test_en-UK": {
+      "macro_f1": 0.48490945674044267,
+      "precision_macro": 0.470703125,
+      "recall_macro": 0.5,
+      "confusion_matrix": [
+        [
+          241,
+          0
+        ],
+        [
+          15,
+          0
+        ]
+      ]
+    },
+    "test_en-AU": {
+      "macro_f1": 0.4046511627906977,
+      "precision_macro": 0.33984375,
+      "recall_macro": 0.5,
+      "confusion_matrix": [
+        [
+          174,
+          0
+        ],
+        [
+          82,
+          0
+        ]
+      ]
+    },
+    "test_en-IN": {
+      "macro_f1": 0.4796747967479675,
+      "precision_macro": 0.4609375,
+      "recall_macro": 0.5,
+      "confusion_matrix": [
+        [
+          236,
+          0
+        ],
+        [
+          20,
+          0
+        ]
+      ]
+    },
+    "note": "smoke run: tiny subset + 1 epoch; full runs should be on Colab GPU"
+  },
+  "lora_smoke_sarcasm_opt-125m_en-UK": {
+    "macro_f1": 0.4859437751004016,
+    "precision_macro": 0.47265625,
+    "recall_macro": 0.5,
+    "confusion_matrix": [
+      [
+        121,
+        0
+      ],
+      [
+        7,
+        0
+      ]
+    ],
+    "note": "smoke run: tiny base model + tiny subset; full Q2.3 uses 1\u20133B base on Colab GPU"
+  }
+}

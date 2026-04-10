@@ -8,7 +8,7 @@ import joblib
 import os
 
 def tfidf_features(df_train, df_validation, df_test, text_column='text',
-                   max_features=15000, save_path="./tfidf"):
+                   max_features=15000, save_path="./models/tfidf"):
 
     os.makedirs(save_path, exist_ok=True)
     #vectorizer initialisation with parameters
@@ -29,7 +29,7 @@ def tfidf_features(df_train, df_validation, df_test, text_column='text',
     X_test_tfidf = vectorizer.transform(df_test[text_column])
 
     # Save vectorizer
-    joblib.dump(vectorizer, f"{save_path}/tfidf_vectorizer.pkl")
+    joblib.dump(vectorizer, f"{save_path}/tfidf_vectorizer_yusrah_omar.pkl")
     # Save TF-IDF matrices
     save_npz(f"{save_path}/X_train_tfidf.npz", X_train_tfidf)
     save_npz(f"{save_path}/X_validation_tfidf.npz", X_validation_tfidf)
@@ -38,9 +38,9 @@ def tfidf_features(df_train, df_validation, df_test, text_column='text',
     return X_train_tfidf, X_validation_tfidf, X_test_tfidf, vectorizer
 
 
-def load_tfidf_features(save_path="./tfidf"):
+def load_tfidf_features(save_path="./models/tfidf"):
     #load vectorizer
-    vectorizer = joblib.load(f"{save_path}/tfidf_vectorizer.pkl")
+    vectorizer = joblib.load(f"{save_path}/tfidf_vectorizer_yusrah_omar.pkl")
     
     # Load TF-IDF matrices
     X_train = load_npz(f"{save_path}/X_train_tfidf.npz")

@@ -7,8 +7,14 @@ from collections import Counter
 import warnings
 import spacy
 
-nlp = spacy.load('en_core_web_sm')
 warnings.filterwarnings('ignore')
+
+# spaCy model is optional for basic distribution plots (Q1.1).
+# Some environments (e.g., fresh Colab) won't have `en_core_web_sm` installed by default.
+try:
+    nlp = spacy.load("en_core_web_sm")
+except Exception:
+    nlp = None
 
 class EDA:
     def __init__(self, df_all, df_train, df_validation, df_test):
@@ -26,9 +32,21 @@ class EDA:
         plt.savefig(path, dpi=150, bbox_inches='tight')
         print(f"✅ Figure saved to: {path}")
 
-    def plot_distribution(self, df, column, groupby=None, title=None, xlabel=None, ylabel=None,
-                          plot_type='countplot', save=False, save_path="./reports/figures",
-                          filename=None, **kwargs):
+    def plot_distribution(
+        self,
+        df,
+        column,
+        groupby=None,
+        title=None,
+        xlabel=None,
+        ylabel=None,
+        plot_type="countplot",
+        save=False,
+        save_path="./reports/figures",
+        filename=None,
+        show: bool = True,
+        **kwargs,
+    ):
 
         plt.figure(figsize=(8, 5))
 
@@ -105,7 +123,11 @@ class EDA:
         if save:
             self.save_figure(save_path, filename)
 
-        plt.show()
+        if show:
+            plt.show()
+        else:
+            plt.close()
+
         return plt.gcf()
 
     def variety_source_dist(self, df):
@@ -196,7 +218,6 @@ class EDA:
 
     def source_per_variety(self):
         crosstab = pd.crosstab(self.df_all["variety"], self.df_all["source"])
-        self.create_source_variety_table(crosstab, save_path="./reports")
 
         self.plot_distribution(
             df=self.df_all,
@@ -266,30 +287,26 @@ class EDA:
         per_split = pd.crosstab([self.df_all["variety"], self.df_all["split"]],
                                 self.df_all["Sarcasm"],
                                 normalize="index") * 100
-     '''   print("SARcASM IMBALANCE PER VARIETY & SPLIT")
-        print(per_split.round(2))
-
-        # Create combined column for plotting
-        df_temp = self.df_all.copy()
-        df_temp['variety_split'] = df_temp['variety'] + "\n(" + df_temp['split'] + ")"
-
-        self.plot_distribution(
-            df=df_temp,
-            column='variety_split',
-            groupby='Sarcasm',
-            title="Sarcasm Distribution by Variety and Split",
-            xlabel="Variety (Split)",
-            ylabel="Percentage (%)",
-            plot_type='grouped_bar',
-            save=True,
-            filename="sarcasm_by_variety_split.png"
-        )'''
+        # NOTE: If you want a variety×split plot, uncomment and run:
+        # df_temp = self.df_all.copy()
+        # df_temp["variety_split"] = df_temp["variety"] + "\n(" + df_temp["split"] + ")"
+        # self.plot_distribution(
+        #     df=df_temp,
+        #     column="variety_split",
+        #     groupby="Sarcasm",
+        #     title="Sarcasm Distribution by Variety and Split",
+        #     xlabel="Variety (Split)",
+        #     ylabel="Percentage (%)",
+        #     plot_type="grouped_bar",
+        #     save=True,
+        #     filename="sarcasm_by_variety_split.png",
+        # )
 
         return overall, per_variety, per_split
         
     # 8. Sentiment imbalance in whole dataset
     def sentiment_imbalance(self):
-        self.df_all["Sarcasm"] = self.df_all["Sentiment"].astype(int)
+        self.df_all["Sentiment"] = self.df_all["Sentiment"].astype(int)
         overall = self.df_all["Sentiment"].value_counts(normalize=True) * 100
         # Per variety imbalance
         per_variety = pd.crosstab(self.df_all["variety"], self.df_all["Sentiment"], normalize="index") * 100
@@ -310,22 +327,20 @@ class EDA:
         per_split = pd.crosstab([self.df_all["variety"], self.df_all["split"]],
                                 self.df_all["Sentiment"],
                                 normalize="index") * 100
-'''
-        # Create combined column for plotting
-        df_temp = self.df_all.copy()
-        df_temp['variety_split'] = df_temp['variety'] + "\n(" + df_temp['split'] + ")"
-
-        self.plot_distribution(
-            df=df_temp,
-            column='variety_split',
-            groupby='Sentiment',
-            title="Sentiment Distribution by Variety and Split",
-            xlabel="Variety (Split)",
-            ylabel="Percentage (%)",
-            plot_type='grouped_bar',
-            save=True,
-            filename="sentiment_by_variety_split.png"
-        )'''
+        # NOTE: If you want a variety×split plot, uncomment and run:
+        # df_temp = self.df_all.copy()
+        # df_temp["variety_split"] = df_temp["variety"] + "\n(" + df_temp["split"] + ")"
+        # self.plot_distribution(
+        #     df=df_temp,
+        #     column="variety_split",
+        #     groupby="Sentiment",
+        #     title="Sentiment Distribution by Variety and Split",
+        #     xlabel="Variety (Split)",
+        #     ylabel="Percentage (%)",
+        #     plot_type="grouped_bar",
+        #     save=True,
+        #     filename="sentiment_by_variety_split.png",
+        # )
         return overall, per_variety, per_split
 
     def pos_for_sarcasm(self, n_samples=500):

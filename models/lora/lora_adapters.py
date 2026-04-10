@@ -2,6 +2,7 @@ import os
 import torch
 from dataclasses import dataclass
 from typing import Optional
+import inspect
 
 from transformers import (
     AutoTokenizer,
@@ -21,6 +22,10 @@ SUPPORTED_MODELS = {
     "llama-1b" : "meta-llama/Llama-3.2-1B",  
     "llama-3b" : "meta-llama/Llama-3.2-3B",   
     "opt-1.3b" : "facebook/opt-1.3b", 
+    # Open-weight, generally ungated option in the 1–3B range
+    "qwen2.5-1.5b": "Qwen/Qwen2.5-1.5B",
+    # Small model for fast local smoke tests (not for final Q2.3 results)
+    "opt-125m": "facebook/opt-125m",
 }
 
 VARIETIES = ["en-UK", "en-AU", "en-IN"]
@@ -87,6 +92,7 @@ def load_model(
         model_id,
         num_labels = num_labels,
         device_map = device_map,
+        # transformers>=5 prefers `dtype` over `torch_dtype`
         dtype = torch.float16 if torch.cuda.is_available() else torch.float32,
     )
 
@@ -144,38 +150,32 @@ def training_args(
     batch_size : int = 8,
     lr         : float = 2e-4,
 ) -> TrainingArguments:
-    
-    return TrainingArguments(
-        output_dir = output_dir,  #lora adapters will be saved here
-        num_train_epochs = epochs,
-        per_device_train_batch_size = batch_size,
-        per_device_eval_batch_size  = batch_size * 2,  # eval can use larger batch
-        learning_rate = lr,
-        seed = seed,
 
-        # evaluate at end of each epoch to track learning curve
-        eval_strategy = "epoch",
-        save_strategy = "epoch",
+    # transformers 5 uses `eval_strategy`; older versions use `evaluation_strategy`
+    sig = inspect.signature(TrainingArguments.__init__)
+    eval_key = "eval_strategy" if "eval_strategy" in sig.parameters else "evaluation_strategy"
 
-        # keep the best checkpoint not just the last one
-        load_best_model_at_end = True,
-        metric_for_best_model = "eval_loss",
-        greater_is_better = False,
-
-        # logging
-        logging_dir = f"{output_dir}/logs",
-        logging_steps = 10,
-        run_name = f"lora-{variety}-seed{seed}",
-
-        fp16 = torch.cuda.is_available(),
-
-        # don't push to hub automatically during training
-        push_to_hub = False,
-
-        # remove unused columns automatically
-        remove_unused_columns = False,
-
+    kwargs = dict(
+        output_dir=output_dir,  # lora adapters will be saved here
+        num_train_epochs=epochs,
+        per_device_train_batch_size=batch_size,
+        per_device_eval_batch_size=batch_size * 2,
+        learning_rate=lr,
+        seed=seed,
+        save_strategy="epoch",
+        load_best_model_at_end=True,
+        metric_for_best_model="eval_loss",
+        greater_is_better=False,
+        logging_dir=f"{output_dir}/logs",
+        logging_steps=10,
+        run_name=f"lora-{variety}-seed{seed}",
+        fp16=torch.cuda.is_available(),
+        push_to_hub=False,
+        remove_unused_columns=False,
     )
+    kwargs[eval_key] = "epoch"
+
+    return TrainingArguments(**kwargs)
 
 
 # adapter saving and loading
@@ -223,7 +223,7 @@ if __name__ == "__main__":
     sys.path.append("..")  
 
     from datasets import load_dataset
-    from src.functions_to_use import class_weights, new_weighted_class
+    from src.training_utils import class_weights, new_weighted_class
 
     from dotenv import load_dotenv
     from huggingface_hub import login
