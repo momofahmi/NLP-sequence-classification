@@ -26,25 +26,54 @@ Notes for Colab:
 - Dataset loads from Hugging Face: `load_dataset("surrey-nlp/BESSTIE-CW-26")`
 - **Colab notebooks** clone branch **`fiyin/model-pipeline` by default** (so `src/besstie_data_loader.py` exists). Optional env: `GITHUB_REPO`, `REPO_BRANCH`, `REPO_URL`, `REPO_DIR`, `REPO_ZIP`.
 - **Zip (no git):** Colab has no folder upload — zip the project on your machine, then **Files** → upload one `.zip` (e.g. `NLP-sequence-classification.zip` under `/content/`, or set `REPO_ZIP`).
-- **Private repo:** use a zip, or fork and set `GITHUB_REPO=YourUser/NLP-sequence-classification` for a public fork.
+- **Private repo:** Colab cannot `git clone` it without credentials. Use a **zip** (see below), or a **public** GitHub repo that contains the same code (see “Private fork” section).
 - **Uploading only the `.ipynb` file is not enough** — you need `src/`, `requirements.txt`, and the rest of the repo (or a successful clone).
 
-### Fork to your GitHub for Colab (when `momofahmi/...` is private)
+### Colab needs a **public** clone URL (or a zip)
 
-Yes — this is the “fork method”: Colab clones over **anonymous HTTPS**, so the clone URL must point at a repo GitHub serves **without** login (almost always a **public** fork).
+`git clone https://github.com/...` in Colab uses **no** GitHub password. So the repo must be **public**, or clone fails with `could not read Username`.
 
-1. **Fork** the upstream repo on GitHub: open `https://github.com/momofahmi/NLP-sequence-classification`, click **Fork** (top right), create the fork under your account. You need permission to see the private upstream to fork it (e.g. collaborator).
-2. **Branch** `fiyin/model-pipeline` must exist on your fork. If it does not, push it from your laptop:  
-   `git push fork fiyin/model-pipeline` (or add your fork as `remote` and push that branch).
-3. **Make the fork public** (for testing without tokens): your fork → **Settings → General** (scroll to **Danger zone**) → **Change repository visibility** → **Public**. A **private** fork will hit the same `could not read Username` error on Colab.
-4. **Point the notebook at your fork** before the first setup cell runs:
-   - **Option A — Colab environment variable:** where Colab lets you set variables, set `GITHUB_REPO` to `YourGitHubUsername/NLP-sequence-classification` (no `https://`, no spaces).
-   - **Option B — extra cell above setup:** run once, then run the rest:
-     ```python
-     import os
-     os.environ["GITHUB_REPO"] = "YourGitHubUsername/NLP-sequence-classification"
-     ```
-5. **Restart** after a failed clone: `Runtime → Restart session`, delete stale folder if needed (`!rm -rf /content/NLP-sequence-classification`), then **Run all** again.
+### If your fork is private (common when upstream is private)
+
+GitHub often **does not let you change a fork to public** when the parent repository is private. Your private fork (e.g. `TheFinix13/NLP-coursework`) **still cannot be cloned from Colab** until something is public.
+
+Use one of these:
+
+**A — Zip (simplest)**  
+On your laptop, zip the project folder (include `src/`, `requirements.txt`, etc.), upload `NLP-sequence-classification.zip` to Colab’s **Files** (`/content/`), then run the first notebook cell.
+
+**B — New public repo (not a fork)**  
+Create a **brand-new** repository on GitHub, choose **Public**, any name (e.g. `besstie-colab-mirror`). Do **not** use “Fork”; it should not be linked as a fork of the private group repo. From your machine (where you already have the code):
+
+```bash
+cd /path/to/your/local/clone
+git remote add colab_public https://github.com/TheFinix13/YOUR_NEW_PUBLIC_REPO.git
+git push colab_public fiyin/model-pipeline:fiyin/model-pipeline
+```
+
+Then in Colab, before the setup cell:
+
+```python
+import os
+os.environ["GITHUB_REPO"] = "TheFinix13/YOUR_NEW_PUBLIC_REPO"
+os.environ["REPO_BRANCH"] = "fiyin/model-pipeline"
+```
+
+(If you pushed that branch as `main` on the public repo, set `REPO_BRANCH` to `main` instead.)
+
+**C — Ask upstream**  
+Ask the owner to make the group repo **public** for marking, or add a **public** read-only mirror the course can clone.
+
+### If you do have a **public** fork or mirror
+
+Set `GITHUB_REPO` to the **`owner/repo`** slug (repo name can differ from upstream, e.g. `TheFinix13/NLP-coursework`). Run this **before** the first setup cell, or use Colab environment variables:
+
+```python
+import os
+os.environ["GITHUB_REPO"] = "TheFinix13/NLP-coursework"  # example; repo must be public
+```
+
+Then **Runtime → Restart session**, `!rm -rf /content/NLP-sequence-classification` if a bad clone exists, and **Run all** again.
 
 The first notebook cell still runs `pip install -r requirements.txt` after a successful clone into `/content/NLP-sequence-classification`.
 
