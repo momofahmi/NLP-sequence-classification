@@ -1,13 +1,3 @@
-"""
-Omar - Linguistic Feature Analysis
-Compares sarcastic vs non-sarcastic texts across:
-  - Punctuation usage (!, ?, ...)
-  - ALL CAPS word count
-  - Emoji presence
-  - Average sentence length
-And extracts variety-specific terms (Australian slang, Indian English, British colloquialisms).
-"""
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,7 +7,6 @@ import os
 import warnings
 warnings.filterwarnings('ignore')
 
-# Emoji detection — uses regex range (no external emoji library needed)
 EMOJI_PATTERN = re.compile(
     "[\U00010000-\U0010ffff"
     "\U0001F600-\U0001F64F"
@@ -28,7 +17,6 @@ EMOJI_PATTERN = re.compile(
     flags=re.UNICODE
 )
 
-# Variety-specific seed term lists for extraction guidance
 VARIETY_SEEDS = {
     'en-AU': ['arvo', 'ute', 'mate', 'heaps', 'reckon', 'servo', 'brekkie',
               'arvo', 'footy', 'thongs', 'sunnies', 'bikkie', 'maccas',
@@ -55,12 +43,10 @@ class LinguisticFeatureAnalysis:
         os.makedirs(self.figures_path, exist_ok=True)
 
         self._extract_features()
-
-    # ------------------------------------------------------------------
+                   
     # Feature extraction helpers
-    # ------------------------------------------------------------------
+  
     def _extract_features(self):
-        """Add linguistic feature columns to the dataframe."""
         txt = self.df[self.text_col].fillna('').astype(str)
 
         self.df['feat_exclamation']   = txt.str.count(r'!')
@@ -75,7 +61,6 @@ class LinguisticFeatureAnalysis:
         self.df['feat_emoji_count']   = txt.apply(
             lambda t: len(EMOJI_PATTERN.findall(t))
         )
-        # Average sentence length (words per sentence)
         self.df['feat_avg_sent_len']  = txt.apply(self._avg_sentence_length)
 
     @staticmethod
@@ -85,12 +70,10 @@ class LinguisticFeatureAnalysis:
         if not sentences:
             return 0.0
         return np.mean([len(s.split()) for s in sentences])
-
-    # ------------------------------------------------------------------
+      
     # 1. Sarcastic vs non-sarcastic comparison
-    # ------------------------------------------------------------------
+
     def compare_sarcasm_features(self, save: bool = True) -> pd.DataFrame:
-        """Compare mean linguistic features between sarcastic and non-sarcastic texts."""
         features = {
             'Exclamation marks (!)': 'feat_exclamation',
             'Question marks (?)':    'feat_question',
@@ -160,16 +143,12 @@ class LinguisticFeatureAnalysis:
             print(f"\n✅ Figure saved to: {path}")
         plt.show()
 
-    # ------------------------------------------------------------------
+    
     # 2. Variety-specific term extraction
-    # ------------------------------------------------------------------
+
     def extract_variety_terms(self, top_n: int = 30,
                                save: bool = True) -> dict[str, pd.DataFrame]:
-        """
-        Extract the top-N terms that are distinctive to each variety
-        using a simple term-frequency ratio (TF in variety / TF elsewhere).
-        Also checks for seed terms from VARIETY_SEEDS.
-        """
+       
         varieties = self.df[self.variety_col].unique()
         variety_term_dfs = {}
 
@@ -235,17 +214,12 @@ class LinguisticFeatureAnalysis:
                 print(f"  ✅ Saved to: {csv_path}")
 
         return variety_term_dfs
-
-    # ------------------------------------------------------------------
+  
     # 3. Error analysis prep — tricky cases per variety
-    # ------------------------------------------------------------------
-    def identify_tricky_cases(self, n_per_variety: int = 10,
+    
+  def identify_tricky_cases(self, n_per_variety: int = 10,
                                save: bool = True) -> pd.DataFrame:
-        """
-        Identify tricky cases: sarcastic texts with positive sentiment
-        OR non-sarcastic texts with very high punctuation density.
-        These are the cases most likely to fool a classifier.
-        """
+        
         self.df['feat_punct_density'] = (
             self.df['feat_exclamation'] + self.df['feat_question'] + self.df['feat_ellipsis']
         )
@@ -296,10 +270,9 @@ class LinguisticFeatureAnalysis:
             print(f"\n✅ Tricky cases saved to: {csv_path}")
 
         return df_tricky
-
-    # ------------------------------------------------------------------
+   
     # 4. Run full analysis
-    # ------------------------------------------------------------------
+
     def run(self, save: bool = True):
         df_compare = self.compare_sarcasm_features(save=save)
         variety_terms = self.extract_variety_terms(save=save)
