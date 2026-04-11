@@ -87,14 +87,20 @@ def load_model(
         tokenizer.pad_token = tokenizer.eos_token
         print("[load_model] Set pad_token = eos_token (required for decoder models)")
 
-    # load the model 
-    model = AutoModelForSequenceClassification.from_pretrained(
-        model_id,
-        num_labels = num_labels,
-        device_map = device_map,
-        # transformers>=5 prefers `dtype` over `torch_dtype`
-        dtype = torch.float16 if torch.cuda.is_available() else torch.float32,
-    )
+    # Load weights. On CPU, device_map="auto" can use accelerate offloading / meta tensors;
+    # PEFT then fails (e.g. "weight is on the meta device") when wrapping the classifier.
+    use_cuda = torch.cuda.is_available()
+    load_kw = dict(num_labels=num_labels)
+    if use_cuda:
+        load_kw["device_map"] = device_map
+        load_kw["torch_dtype"] = torch.float16
+    else:
+        # Single contiguous CPU load — avoids meta/offload hooks that break get_peft_model.
+        load_kw["device_map"] = None
+        load_kw["low_cpu_mem_usage"] = False
+        load_kw["torch_dtype"] = torch.float32
+
+    model = AutoModelForSequenceClassification.from_pretrained(model_id, **load_kw)
 
     model.config.pad_token_id = tokenizer.pad_token_id
 

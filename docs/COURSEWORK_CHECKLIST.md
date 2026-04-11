@@ -4,20 +4,20 @@ Tick items in GitHub by editing this file: change `[ ]` to `[x]`. You can also c
 
 ## Data & EDA (Q1)
 
-- [ ] BESSTIE loaded; train/val/test splits understood
-- [ ] Q1.1 EDA figures produced and stored under `reports/figures/` (e.g. `q1_1_*`)
-- [ ] Q1.2 vocabulary / overlap analysis + figure (e.g. `q1_2_*`)
+- [x] BESSTIE loaded; train/val/test splits understood
+- [x] Q1.1 EDA figures produced and stored under `reports/figures/` (e.g. `q1_1_*`)
+- [x] Q1.2 vocabulary / overlap analysis + figure (e.g. `q1_2_*`)
 
 ## Baseline (Q2.1)
 
-- [ ] TF-IDF + LogReg (or agreed baseline) run with reported metrics
-- [ ] Key metrics captured for report (e.g. in `reports/results/` or notebook output)
+- [x] TF-IDF + LogReg (or agreed baseline) run with reported metrics
+- [x] Key metrics captured for report (e.g. in `reports/results/` or notebook output)
 
 ## RoBERTa cross-variety (Q2.2)
 
-- [ ] Notebook `2.2` run in **FULL** mode (`DEMO_MODE=0`), GPU
-- [ ] Two seeds; macro-F1 cross-variety matrix + confusion matrices / JSON results
-- [ ] Final figures saved under `reports/figures/` (e.g. `q2_2_*`) for the PDF
+- [x] Notebook `2.2` run in **FULL** mode (`DEMO_MODE=0`), GPU
+- [x] Two seeds; macro-F1 cross-variety matrix + confusion matrices / JSON results
+- [x] Final figures saved under `reports/figures/` (e.g. `q2_2_*`) for the PDF
 
 ## LoRA (Q2.3)
 
