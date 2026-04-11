@@ -2,7 +2,8 @@
 **BESSTIE: Sentiment & Sarcasm Classification across English Varieties**  
 University of Surrey, Semester 2, 2026
 
-**Coursework checklist (tick in-repo):** [docs/COURSEWORK_CHECKLIST.md](docs/COURSEWORK_CHECKLIST.md)
+**Coursework checklist (tick in-repo):** [docs/COURSEWORK_CHECKLIST.md](docs/COURSEWORK_CHECKLIST.md)  
+**Draft report (compiled results):** [docs/report.md](docs/report.md) · Section map: [docs/REPORT_TEMPLATE.md](docs/REPORT_TEMPLATE.md)
 
 ## Colab
 Open in Colab (branch `fiyin/model-pipeline`):
