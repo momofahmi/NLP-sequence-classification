@@ -1,0 +1,30 @@
+{
+  "experiment": "Q2.2 RoBERTa cross-variety Sarcasm",
+  "status": "template_fill_from_notebook_2_2_FULL_run",
+  "model": "roberta-base",
+  "mode": "FULL",
+  "epochs": 3,
+  "seeds": [42, 123],
+  "metric": "macro_f1",
+  "macro_f1": {
+    "seed_42": {
+      "en-UK": { "en-UK": null, "en-AU": null, "en-IN": null },
+      "en-AU": { "en-UK": null, "en-AU": null, "en-IN": null },
+      "en-IN": { "en-UK": null, "en-AU": null, "en-IN": null }
+    },
+    "seed_123": {
+      "en-UK": { "en-UK": null, "en-AU": null, "en-IN": null },
+      "en-AU": { "en-UK": null, "en-AU": null, "en-IN": null },
+      "en-IN": { "en-UK": null, "en-AU": null, "en-IN": null }
+    },
+    "mean_over_seeds": {
+      "en-UK": { "en-UK": null, "en-AU": null, "en-IN": null },
+      "en-AU": { "en-UK": null, "en-AU": null, "en-IN": null },
+      "en-IN": { "en-UK": null, "en-AU": null, "en-IN": null }
+    }
+  },
+  "notes": [
+    "null = placeholder until FULL 3x3 macro-F1 values are copied from notebook 2.2 output into this file.",
+    "Then: python3 scripts/plot_cross_variety_matrix.py --json ... --matrix-key mean_over_seeds --out reports/figures/q2_2_roberta_macro_f1_heatmap.png"
+  ]
+}

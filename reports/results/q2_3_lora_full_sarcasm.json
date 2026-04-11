@@ -1,0 +1,32 @@
+{
+  "experiment": "Q2.3 LoRA FULL Sarcasm",
+  "base_model": "Qwen/Qwen2.5-1.5B",
+  "model_key": "qwen2.5-1.5b",
+  "mode": "FULL",
+  "epochs": 3,
+  "seeds": [42, 123],
+  "task": "Sarcasm",
+  "metric": "macro_f1",
+  "macro_f1": {
+    "seed_42": {
+      "en-UK": { "en-UK": 0.6485943775100401, "en-AU": 0.5054804127842901, "en-IN": 0.6049394821510647 },
+      "en-AU": { "en-UK": 0.6116264687693259, "en-AU": 0.7808072602419205, "en-IN": 0.5332387283335484 },
+      "en-IN": { "en-UK": 0.49847921595133493, "en-AU": 0.41932416324015914, "en-IN": 0.5283801020408163 }
+    },
+    "seed_123": {
+      "en-UK": { "en-UK": 0.4803266518188567, "en-AU": 0.413884007029877, "en-IN": 0.5155216284987277 },
+      "en-AU": { "en-UK": 0.61576260768672, "en-AU": 0.7685659684410565, "en-IN": 0.522224840034804 },
+      "en-IN": { "en-UK": 0.49847921595133493, "en-AU": 0.4133685136323659, "en-IN": 0.5294546116725849 }
+    },
+    "mean_over_seeds": {
+      "en-UK": { "en-UK": 0.5644605146644484, "en-AU": 0.4596822099070835, "en-IN": 0.5602305553248962 },
+      "en-AU": { "en-UK": 0.613694538228023, "en-AU": 0.7746866143414885, "en-IN": 0.5277317781841762 },
+      "en-IN": { "en-UK": 0.49847921595133493, "en-AU": 0.4163463384362625, "en-IN": 0.5289173568567006 }
+    }
+  },
+  "notes": [
+    "en-AU diagonal best (~0.775 mean macro-F1): more balanced training class counts.",
+    "Strong seed variance: en-UK adapter seed_123 collapsed to majority class on some tests.",
+    "en-IN training noisy (epoch 3 train loss near 0 on seed 42); validate with second seed and consider early stopping."
+  ]
+}
