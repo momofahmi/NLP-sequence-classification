@@ -49,13 +49,13 @@ Tick items by editing this file: `[ ]` → `[x]`. Align with `docs/report.md` (d
 
 ---
 
-## Error analysis & few-shot (if required)
+## Error analysis & few-shot (required)
 
 - [ ] §4 in `REPORT_TEMPLATE.md`: 10 errors, 4 linguistic analyses, 4-shot prompt, re-test 6 — *TODO in `docs/report.md`*
 
 ---
 
-## Deployment & efficiency (if required)
+## Deployment & efficiency (required)
 
 - [ ] Demo app runs (`app/streamlit_app.py` or agreed) + **screenshots**
 - [ ] Latency / efficiency paragraph (baseline vs RoBERTa vs LoRA) — *TODO in `docs/report.md`*
