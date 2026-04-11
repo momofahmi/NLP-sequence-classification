@@ -203,7 +203,18 @@ def training_args(
     )
     kwargs[eval_key] = "epoch"
 
-    return TrainingArguments(**kwargs)
+    args = TrainingArguments(**kwargs)
+    # If fp16 and bf16 are both False, HF still leaves mixed_precision from
+    # os.environ["ACCELERATE_MIXED_PRECISION"] (Colab/accelerate often sets "fp16").
+    # That enables GradScaler + fp16 autocast and breaks PEFT ("unscale FP16 gradients").
+    if args.bf16:
+        args.mixed_precision = "bf16"
+    elif args.fp16:
+        args.mixed_precision = "fp16"
+    else:
+        args.mixed_precision = "no"
+
+    return args
 
 
 # adapter saving and loading
