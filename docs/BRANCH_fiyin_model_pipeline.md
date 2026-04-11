@@ -36,7 +36,7 @@ Bring the BESSTIE coursework work into one coherent structure:
 | `app/streamlit_app.py` | Simple UI for variety + task (plug in real model IDs later). |
 | `reports/figures/` | Q1.1 / Q1.2 figures (`q1_1_*`, `q1_2_*` naming). |
 | `reports/results/` | e.g. `local_run_summary.json` with baseline + vocab numbers from local runs. |
-| `docs/` | This file + `REPORT_TEMPLATE.md` for the PDF report. |
+| `docs/` | This file + `report_template.md`, `REPORT.md`, `coursework_checklist.md`. |
 
 ---
 

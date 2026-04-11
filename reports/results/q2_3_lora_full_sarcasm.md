@@ -2,7 +2,7 @@
 
 **Heatmap (repo):** `reports/figures/q2_3_lora_macro_f1_heatmap.png` (mean macro-F1 over seeds).
 
-**Generated for the group report.** Copy tables and paragraphs into `docs/REPORT_TEMPLATE.md` §2.3 and §3 as needed.
+**Generated for the group report.** Copy tables and paragraphs into `docs/report_template.md` §2.3 and §3 as needed.
 
 ## Experimental setup
 

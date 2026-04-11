@@ -1,6 +1,6 @@
 # Coursework checklist
 
-Tick items by editing this file: `[ ]` → `[x]`. Align with `docs/report.md` (draft) and `docs/REPORT_TEMPLATE.md` (section map).
+Tick items by editing this file: `[ ]` → `[x]`. Align with `docs/REPORT.md` (draft) and `docs/report_template.md` (section map).
 
 ---
 
@@ -24,7 +24,7 @@ Tick items by editing this file: `[ ]` → `[x]`. Align with `docs/report.md` (d
 - [x] Notebook `2.2` FULL (`DEMO_MODE=0`), GPU
 - [x] Seeds 42 & 123; **mean** cross-variety matrix documented (`reports/results/q2_2_roberta_crossvariety_sarcasm.md` + `.json`)
 - [x] Figures: `reports/figures/q2_2_roberta_macro_f1_heatmap.png`; optional originals `q2_2 (RoBERTa) *.png`
-- [ ] **PDF only:** paste §2.2 prose + tables from `docs/report.md` into final document; add **group** discussion of transfer vs `inner_pool` / `all` if required by brief
+- [ ] **PDF only:** paste §2.2 prose + tables from `docs/REPORT.md` into final document; add **group** discussion of transfer vs `inner_pool` / `all` if required by brief
 
 ---
 
@@ -40,8 +40,8 @@ Tick items by editing this file: `[ ]` → `[x]`. Align with `docs/report.md` (d
 
 ## Report & submission
 
-- [x] Draft report content compiled: **`docs/report.md`** (merge with Yusrah’s doc / house style)
-- [ ] Final **PDF** per module rules (page limits per `REPORT_TEMPLATE.md` sections)
+- [x] Draft report content compiled: **`docs/REPORT.md`** (merge with Yusrah’s doc / house style)
+- [ ] Final **PDF** per module rules (page limits per `report_template.md` sections)
 - [ ] Title page: **group name**, **all members**, **declaration of originality**
 - [ ] **References** complete; figures cited in text
 - [ ] Code **ZIP** / bundle per brief (exclude large `tmp/` checkpoints, `.venv`, etc.)
@@ -51,14 +51,14 @@ Tick items by editing this file: `[ ]` → `[x]`. Align with `docs/report.md` (d
 
 ## Error analysis & few-shot (required)
 
-- [ ] §4 in `REPORT_TEMPLATE.md`: 10 errors, 4 linguistic analyses, 4-shot prompt, re-test 6 — *TODO in `docs/report.md`*
+- [ ] §4 in `report_template.md`: 10 errors, 4 linguistic analyses, 4-shot prompt, re-test 6 — *TODO in `docs/REPORT.md`*
 
 ---
 
 ## Deployment & efficiency (required)
 
 - [ ] Demo app runs (`app/streamlit_app.py` or agreed) + **screenshots**
-- [ ] Latency / efficiency paragraph (baseline vs RoBERTa vs LoRA) — *TODO in `docs/report.md`*
+- [ ] Latency / efficiency paragraph (baseline vs RoBERTa vs LoRA) — *TODO in `docs/REPORT.md`*
 
 ---
 
@@ -69,4 +69,4 @@ Tick items by editing this file: `[ ]` → `[x]`. Align with `docs/report.md` (d
 
 ---
 
-*Last updated: draft report `docs/report.md`; modelling branch `fiyin/model-pipeline`.*
+*Last updated: draft report `docs/REPORT.md`; modelling branch `fiyin/model-pipeline`.*

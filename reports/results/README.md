@@ -1,6 +1,6 @@
 # Results write-ups (for the PDF report)
 
-Short analysis + tables live here so the group can copy into `docs/REPORT_TEMPLATE.md` without hunting notebooks.
+Short analysis + tables live here so the group can copy into `docs/report_template.md` without hunting notebooks.
 
 | File | Section | Status |
 |------|---------|--------|

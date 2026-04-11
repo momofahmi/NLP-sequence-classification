@@ -3,7 +3,7 @@
 **Heatmap (3×3 variety-only, mean over seeds):** `reports/figures/q2_2_roberta_macro_f1_heatmap.png`  
 **Structured numbers:** `q2_2_roberta_crossvariety_sarcasm.json`
 
-Copy tables and interpretation into `docs/REPORT_TEMPLATE.md` §2.2.
+Copy tables and interpretation into `docs/report_template.md` §2.2.
 
 ---
 
