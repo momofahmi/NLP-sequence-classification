@@ -51,7 +51,7 @@ Tick items by editing this file: `[ ]` → `[x]`. Align with `docs/REPORT.md` (d
 
 ## Error analysis & few-shot (required)
 
-- [ ] §4 in `report_template.md`: 10 errors, 4 linguistic analyses, 4-shot prompt, re-test 6 — *TODO in `docs/REPORT.md`*
+- [ ] 4 in `report_template.md`: 10 errors, 4 linguistic analyses, 4-shot prompt, re-test 6 — *TODO in `docs/REPORT.md`*
 
 ---
 
