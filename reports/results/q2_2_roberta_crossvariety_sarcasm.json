@@ -1,30 +1,27 @@
 {
   "experiment": "Q2.2 RoBERTa cross-variety Sarcasm",
-  "status": "template_fill_from_notebook_2_2_FULL_run",
+  "status": "filled",
   "model": "roberta-base",
   "mode": "FULL",
   "epochs": 3,
   "seeds": [42, 123],
   "metric": "macro_f1",
+  "source_note": "Cross-Variety Matrix printed at end of notebook 2.2; values are aggregated over seeds 42 and 123 (notebook averages per cell). Per-seed 3x3 matrices were not in the log paste—add later if needed.",
   "macro_f1": {
-    "seed_42": {
-      "en-UK": { "en-UK": null, "en-AU": null, "en-IN": null },
-      "en-AU": { "en-UK": null, "en-AU": null, "en-IN": null },
-      "en-IN": { "en-UK": null, "en-AU": null, "en-IN": null }
-    },
-    "seed_123": {
-      "en-UK": { "en-UK": null, "en-AU": null, "en-IN": null },
-      "en-AU": { "en-UK": null, "en-AU": null, "en-IN": null },
-      "en-IN": { "en-UK": null, "en-AU": null, "en-IN": null }
-    },
     "mean_over_seeds": {
-      "en-UK": { "en-UK": null, "en-AU": null, "en-IN": null },
-      "en-AU": { "en-UK": null, "en-AU": null, "en-IN": null },
-      "en-IN": { "en-UK": null, "en-AU": null, "en-IN": null }
+      "en-UK": { "en-UK": 0.4799, "en-AU": 0.4139, "en-IN": 0.4989 },
+      "en-AU": { "en-UK": 0.6272, "en-AU": 0.7517, "en-IN": 0.5178 },
+      "en-IN": { "en-UK": 0.4803, "en-AU": 0.4139, "en-IN": 0.4822 }
+    },
+    "additional_training_pools": {
+      "inner_pool": { "en-UK": 0.6935, "en-AU": 0.6833, "en-IN": 0.5917 },
+      "all": { "en-UK": 0.7323, "en-AU": 0.6787, "en-IN": 0.5638 }
     }
   },
+  "notebook_best_condition": "all",
   "notes": [
-    "null = placeholder until FULL 3x3 macro-F1 values are copied from notebook 2.2 output into this file.",
-    "Then: python3 scripts/plot_cross_variety_matrix.py --json ... --matrix-key mean_over_seeds --out reports/figures/q2_2_roberta_macro_f1_heatmap.png"
+    "Variety-only rows (uk_only / au_only / in_only) match the same protocol as LoRA Q2.3 (one model per variety).",
+    "inner_pool and all are extra multi-variety training pools from notebook 2.2—stronger diagonal/off-diagonal when more data mixes varieties.",
+    "Sklearn UndefinedMetricWarning during eval: some runs predicted only one class on a slice—use zero_division=0 in report metrics (already recommended for LoRA)."
   ]
 }
