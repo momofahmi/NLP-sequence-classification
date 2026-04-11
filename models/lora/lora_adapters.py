@@ -93,12 +93,28 @@ def load_model(
     load_kw = dict(num_labels=num_labels)
     if use_cuda:
         load_kw["device_map"] = device_map
-        load_kw["torch_dtype"] = torch.float16
+        # bf16 when available (matches training_args); else fp32 — fp16 weights + fp16 training hits GradScaler/PEFT issues.
+        _dt = (
+            torch.bfloat16
+            if torch.cuda.is_bf16_supported()
+            else torch.float32
+        )
+        if "dtype" in inspect.signature(
+            AutoModelForSequenceClassification.from_pretrained
+        ).parameters:
+            load_kw["dtype"] = _dt
+        else:
+            load_kw["torch_dtype"] = _dt
     else:
         # Single contiguous CPU load — avoids meta/offload hooks that break get_peft_model.
         load_kw["device_map"] = None
         load_kw["low_cpu_mem_usage"] = False
-        load_kw["torch_dtype"] = torch.float32
+        if "dtype" in inspect.signature(
+            AutoModelForSequenceClassification.from_pretrained
+        ).parameters:
+            load_kw["dtype"] = torch.float32
+        else:
+            load_kw["torch_dtype"] = torch.float32
 
     model = AutoModelForSequenceClassification.from_pretrained(model_id, **load_kw)
 
@@ -161,6 +177,11 @@ def training_args(
     sig = inspect.signature(TrainingArguments.__init__)
     eval_key = "eval_strategy" if "eval_strategy" in sig.parameters else "evaluation_strategy"
 
+    # fp16 + Accelerate GradScaler often breaks PEFT LoRA: "Attempting to unscale FP16 gradients".
+    # Prefer bf16 on supported GPUs (no loss scaling); else full fp32 on GPU.
+    use_cuda = torch.cuda.is_available()
+    use_bf16 = bool(use_cuda and torch.cuda.is_bf16_supported())
+
     kwargs = dict(
         output_dir=output_dir,  # lora adapters will be saved here
         num_train_epochs=epochs,
@@ -175,7 +196,8 @@ def training_args(
         logging_dir=f"{output_dir}/logs",
         logging_steps=10,
         run_name=f"lora-{variety}-seed{seed}",
-        fp16=torch.cuda.is_available(),
+        bf16=use_bf16,
+        fp16=False,
         push_to_hub=False,
         remove_unused_columns=False,
     )
