@@ -165,6 +165,8 @@ def training_args(
         fp16                        = torch.cuda.is_available(),
         push_to_hub                 = False,
         remove_unused_columns       = False,
+        save_total_limit            = 1,
+        report_to                   = "none",
     )
 
 
