@@ -33,6 +33,7 @@ def metrics_computation(y_true, y_pred, task_name):
     return {
         'Accuracy': accuracy_score(y_true, y_pred),
         'F1': f1_score(y_true, y_pred),
+        'F1_Macro': f1_score(y_true, y_pred, average='macro'),
         'Precision': precision_score(y_true, y_pred),
         'Recall': recall_score(y_true, y_pred)
     }
