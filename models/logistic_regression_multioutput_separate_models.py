@@ -94,6 +94,14 @@ class MultiOutputLR:
         MultiOutputLR_predictions = self.prediction_MultiOutputLR(X_test)
         true_sarcasm_labels, true_sentiment_labels = label_extraction(y_test_df)
 
+            # DEBUG: Check if labels are different
+        print("Sarcasm labels - unique:", np.unique(true_sarcasm_labels), "mean:", np.mean(true_sarcasm_labels))
+        print("Sentiment labels - unique:", np.unique(true_sentiment_labels), "mean:", np.mean(true_sentiment_labels))
+        
+        # DEBUG: Check if predictions are different
+        print("Sarcasm predictions - unique:", np.unique(MultiOutputLR_predictions['Sarcasm']), "mean:", np.mean(MultiOutputLR_predictions['Sarcasm']))
+        print("Sentiment predictions - unique:", np.unique(MultiOutputLR_predictions['Sentiment']), "mean:", np.mean(MultiOutputLR_predictions['Sentiment']))
+
         return {
             'Sarcasm': metrics_computation(true_sarcasm_labels, MultiOutputLR_predictions['Sarcasm'], 'Sarcasm'),
             'Sentiment': metrics_computation(true_sentiment_labels, MultiOutputLR_predictions['Sentiment'], 'Sentiment')
@@ -161,6 +169,14 @@ class SeparateLR:
 
         SeparateLR_predictions = self.prediction_SeparateLR(X_test)
         true_sarcasm_labels, true_sentiment_labels = label_extraction(y_test_df)
+
+            # DEBUG: Check if labels are different
+        print("Sarcasm labels - unique:", np.unique(true_sarcasm_labels), "mean:", np.mean(true_sarcasm_labels))
+        print("Sentiment labels - unique:", np.unique(true_sentiment_labels), "mean:", np.mean(true_sentiment_labels))
+        
+        # DEBUG: Check if predictions are different
+        print("Sarcasm predictions - unique:", np.unique(SeparateLR_predictions['Sarcasm']), "mean:", np.mean(SeparateLR_predictions['Sarcasm']))
+        print("Sentiment predictions - unique:", np.unique(SeparateLR_predictions['Sentiment']), "mean:", np.mean(SeparateLR_predictions['Sentiment']))
 
         return {
             'Sarcasm': metrics_computation(true_sarcasm_labels, SeparateLR_predictions['Sarcasm'], 'Sarcasm'),
