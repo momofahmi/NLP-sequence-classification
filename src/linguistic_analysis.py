@@ -181,7 +181,7 @@ class LinguisticFeatureAnalysis:
                 rows.append({
                     'term': word,
                     'count_in_variety': count,
-                    'tf_variety': round(tf_variety * 1000, 3),  # per-1000
+                    'tf_variety': round(tf_variety * 1000, 3), 
                     'tf_overall': round(tf_all * 1000, 3),
                     'distinctiveness_ratio': round(ratio, 2),
                     'is_seed_term': is_seed,
@@ -197,7 +197,6 @@ class LinguisticFeatureAnalysis:
             print(df_terms[['term', 'count_in_variety', 'distinctiveness_ratio',
                              'is_seed_term']].to_string(index=False))
 
-            # Check which seed terms appear
             seeds_found = [w for w in VARIETY_SEEDS.get(variety, [])
                            if w in variety_words]
             if seeds_found:
@@ -217,7 +216,7 @@ class LinguisticFeatureAnalysis:
   
     # 3. Error analysis prep — tricky cases per variety
     
-  def identify_tricky_cases(self, n_per_variety: int = 10,
+    def identify_tricky_cases(self, n_per_variety: int = 10,
                                save: bool = True) -> pd.DataFrame:
         
         self.df['feat_punct_density'] = (
@@ -228,13 +227,11 @@ class LinguisticFeatureAnalysis:
         for variety in sorted(self.df[self.variety_col].unique()):
             sub = self.df[self.df[self.variety_col] == variety].copy()
 
-            # Case 1: sarcastic + positive sentiment (confusing label combo)
             sarc_positive = sub[
                 (sub[self.sarcasm_col] == 1) &
                 (sub.get('Sentiment', sub.get('sentiment', pd.Series(dtype=int))).astype(float) == 1.0)
             ].head(n_per_variety // 2)
 
-            # Case 2: high punctuation density but NOT sarcastic (could confuse model)
             punct_threshold = sub['feat_punct_density'].quantile(0.9)
             high_punct_not_sarc = sub[
                 (sub[self.sarcasm_col] == 0) &
