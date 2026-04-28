@@ -14,7 +14,8 @@ def tfidf_features(df_train, df_validation, df_test, text_column='text',
         min_df=2,    
         max_df=0.95,    
         use_idf=True,
-        smooth_idf=True
+        smooth_idf=True,
+        sublinear_tf=True  
     )
 
     X_train_tfidf = vectorizer.fit_transform(df_train[text_column])
