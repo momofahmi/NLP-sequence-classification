@@ -170,7 +170,7 @@ class SeparateLR:
 
     # Evaluation
     def SeparateLR_evaluation(self, X_test, y_test_df):
-        if self.is_trained = False:
+        if self.is_trained == False:
             raise ValueError("Model not trained yet.")
 
         evaluation_predictions = self.label_prediction_SeparateLR(X_test)
