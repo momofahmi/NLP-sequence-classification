@@ -37,3 +37,15 @@ report/*.pdf
 
 # Large TF-IDF sparse matrices (regenerate from notebook 2.1 / tfidf_feature_extraction)
 models/tfidf/X_*_tfidf.npz
+notebooks/models/tfidf/X_*_tfidf.npz
+
+# Per-checkpoint LoRA adapter snapshots (kept on Hub; only adapter_config + final
+# adapter_model are useful for the submission, the per-step checkpoints are not).
+adapters/*/checkpoint-*/
+
+# Tokenised dataset cache (regenerable; .arrow files are large)
+notebooks/tokenized/
+
+# Submission artefacts
+dist/
+report_*.pdf
