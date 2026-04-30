@@ -4,6 +4,8 @@
 
 Tick items by editing this file (`[ ]` → `[x]`). The report-ready prose blocks for each section are under `reports/results/`. Paste them into the docx (Yusrah's Google Doc → final PDF named `report_PG##.pdf`).
 
+> **Master document**: see `docs/report_outline.md` for the canonical section structure, page-budget table, and Google Docs formatting guide. Apply that outline to the Google Doc before pasting prose blocks.
+
 ---
 
 ## §1 — Data & EDA (15 marks, max 4 pages)
@@ -100,14 +102,24 @@ Tick items by editing this file (`[ ]` → `[x]`). The report-ready prose blocks
 
 ## What I (Fiyin) added on 30 Apr
 
+In `docs/`:
+- `report_outline.md` — **master outline + Google Docs formatting guide**. Apply to the Google Doc first.
+
+In `app/`:
+- `README.md` — how to run Mohamed's Gradio app locally + smoke-test sentences for screenshots.
+
 In `reports/results/`:
 - `q1_2_vocab_overlap.md` — refreshed with full linguistic-distance discussion
 - `q5_1_deployment.md` — full Q5.1 write-up
 - `q5_2_efficiency.md` — Q5.2 write-up template + table skeleton
-- `q4_error_analysis.md` — Q4 template
+- `q4_error_analysis.md` — Q4 template (now includes optional §4.6 LIME panel)
 
 In `scripts/`:
 - `benchmark_inference.py` — Q5.2 latency benchmark
 - `q4_extract_errors.py` — pulls 10 misclassifications from LoRA model
 - `q4_few_shot_eval.py` — 4-shot prompt evaluation
+- `lime_explain.py` — LIME interpretability for any of the three model families
 - `build_submission_zip.sh` — final ZIP packager (excludes checkpoints/datasets)
+
+In `requirements.txt`:
+- Added `lime>=0.2.0.1` for the explainability path.
