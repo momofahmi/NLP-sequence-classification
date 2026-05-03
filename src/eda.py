@@ -138,7 +138,8 @@ class EDA:
             ["test"] * len(self.df_test),
             name="split"
         )
-        table = pd.crosstab(self.df_all["variety"], split_series)
+        
+        table = pd.crosstab(self.df_all["variety"].reset_index(drop=True), split_series.reset_index(drop=True))
         data = {
             'en-AU': {
                 'train': table.loc['en-AU', 'train'],
