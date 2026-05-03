@@ -42,7 +42,7 @@ class EDA:
                               edgecolor='black')
 
             for i, idx in enumerate(table.index):
-                total = .loc[idx].sum()
+                total = table.loc[idx].sum()
                 ax.text(i, total + 5, f'Total: {total}',
                        ha='center', va='bottom', fontsize=9)
 
