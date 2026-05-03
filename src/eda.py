@@ -188,8 +188,6 @@ class EDA:
 
     def source_per_variety(self):
         table = pd.crosstab(self.df_all["variety"], self.df_all["source"])
-        self.create_source_variety_table(table, save_path="./reports")
-
         self.plot_distribution(
             df=self.df_all,
             column='variety',
@@ -285,7 +283,7 @@ class EDA:
             for token in doc:
                 non_sarcastic_pos_tags[token.pos_] = non_sarcastic_pos_tags.get(token.pos_, 0) + 1
         
-        total_sarcarstic_pos_tags = sum(sarcastic_pos_tags.values())
+        total_sarcastic_pos_tags = sum(sarcastic_pos_tags.values())
         total_non_sarcastic_pos_tags = sum(non_sarcastic_pos_tags.values())
         pos_tags = ['NOUN', 'VERB', 'ADJ', 'ADV', 'INTJ', 'PRON', 'ADP']
         sarcastic_pcts = [(sarcastic_pos_tags.get(pos, 0) / total_sarcastic_pos_tags) * 100 for pos in pos_tags]
