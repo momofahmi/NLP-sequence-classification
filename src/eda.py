@@ -16,7 +16,7 @@ class EDA:
         self.df_train = df_train
         self.df_validation = df_validation
         self.df_test = df_test
-        self.df_all = pd.concat([df_train, df_val, df_test])
+        self.df_all = pd.concat([df_train, df_validation, df_test])
         os.makedirs("./reports/figures", exist_ok=True)
         os.makedirs("./reports", exist_ok=True)
 
