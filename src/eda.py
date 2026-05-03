@@ -24,34 +24,33 @@ class EDA:
         os.makedirs(save_path, exist_ok=True)
         path = os.path.join(save_path, filename)
         plt.savefig(path, dpi=150, bbox_inches='tight')
-        print(f"✅ Figure saved to: {path}")
+        print(f" Figure saved to: {path}")
 
+    #Description: draws plots of multiple types whenever needed.
     def plot_distribution(self, df, column, groupby=None, title=None, xlabel=None, ylabel=None,
                           plot_type='countplot', save=False, save_path="./reports/figures",
                           filename=None, **kwargs):
 
         plt.figure(figsize=(8, 5))
 
-        # stacked bar plot
         if plot_type == 'stacked_bar':
             if groupby is None:
                 raise ValueError("groupby parameter required.")
-            crosstab = pd.crosstab(df[column], df[groupby])
-            ax = crosstab.plot(kind='bar', stacked=True,
+            table = pd.crosstab(df[column], df[groupby])
+            ax = table.plot(kind='bar', stacked=True,
                               color=['#4285F4', '#EA4335'],
                               edgecolor='black')
 
-            for i, idx in enumerate(crosstab.index):
-                total = crosstab.loc[idx].sum()
+            for i, idx in enumerate(table.index):
+                total = .loc[idx].sum()
                 ax.text(i, total + 5, f'Total: {total}',
                        ha='center', va='bottom', fontsize=9)
 
-        #grouped bar plot
         elif plot_type == 'grouped_bar':
             if groupby is None:
                 raise ValueError("groupby parameter is required for grouped_bar")
-            crosstab = pd.crosstab(df[column], df[groupby])
-            percentages = crosstab.div(crosstab.sum(axis=1), axis=0) * 100
+            table = pd.crosstab(df[column], df[groupby])
+            percentages = table.div(table.sum(axis=1), axis=0) * 100
 
             num_groups = len(percentages.columns)
             colors = ['#66b3ff', '#ff9999', '#99ff99'][:num_groups]
@@ -70,13 +69,12 @@ class EDA:
                         ax.text(i + (j-0.5)*0.3, value + 1, f'{value:.1f}%',
                                ha='center', va='bottom', fontsize=9)
             plt.legend(title=groupby)
-
-        #heatmap
+            
         elif plot_type == 'heatmap':
             if groupby is None:
                 raise ValueError("groupby parameter is required for heatmap")
-            crosstab = pd.crosstab(df[column], df[groupby])
-            ax = sns.heatmap(crosstab, annot=True, fmt='d', cmap='Blues',
+            table = pd.crosstab(df[column], df[groupby])
+            ax = sns.heatmap(table, annot=True, fmt='d', cmap='Blues',
                             cbar_kws={'label': 'Count'})
 
             if 'highlight' in kwargs:
@@ -140,38 +138,35 @@ class EDA:
             ["test"] * len(self.df_test),
             name="split"
         )
-
-        crosstab = pd.crosstab(self.df_all["variety"], split_series)
+        table = pd.crosstab(self.df_all["variety"], split_series)
         data = {
             'en-AU': {
-                'train': crosstab.loc['en-AU', 'train'],
-                'validation': crosstab.loc['en-AU', 'validation'],
-                'test': crosstab.loc['en-AU', 'test']
+                'train': table.loc['en-AU', 'train'],
+                'validation': table.loc['en-AU', 'validation'],
+                'test': table.loc['en-AU', 'test']
             },
             'en-IN': {
-                'train': crosstab.loc['en-IN', 'train'],
-                'validation': crosstab.loc['en-IN', 'validation'],
-                'test': crosstab.loc['en-IN', 'test']
+                'train': table.loc['en-IN', 'train'],
+                'validation': table.loc['en-IN', 'validation'],
+                'test': table.loc['en-IN', 'test']
             },
             'en-UK': {
-                'train': crosstab.loc['en-UK', 'train'],
-                'validation': crosstab.loc['en-UK', 'validation'],
-                'test': crosstab.loc['en-UK', 'test']
+                'train': table.loc['en-UK', 'train'],
+                'validation': table.loc['en-UK', 'validation'],
+                'test': table.loc['en-UK', 'test']
             }
         }
-        varieties = list(data.keys())
-        splits = ['train', 'validation', 'test']
+        english_varieties = list(data.keys())
+        data_splits = ['train', 'validation', 'test']
         
-        x = np.arange(len(varieties))
+        x = np.arange(len(english_varieties))
         width = 0.25
         
         fig, ax = plt.subplots(figsize=(10, 6))
         
-        for i, split in enumerate(splits):
-            values = [data[v][split] for v in varieties]
+        for i, split in enumerate(data_splits):
+            values = [data[v][split] for v in english_varieties]
             bars = ax.bar(x + i * width, values, width, label=split.capitalize())
-            
-            # Add numbers on top of each bar
             for bar in bars:
                 height = bar.get_height()
                 ax.text(bar.get_x() + bar.get_width()/2., height + 5,
@@ -181,22 +176,19 @@ class EDA:
         ax.set_ylabel('Count', fontsize=12)
         ax.set_title('Split Distribution by Variety', fontsize=14, fontweight='bold')
         ax.set_xticks(x + width)
-        ax.set_xticklabels(varieties)
+        ax.set_xticklabels(english_varieties)
         ax.legend()
         ax.grid(axis='y', alpha=0.3)
         
         plt.tight_layout()
-        
         if save:
             self.save_figure(save_path, "split_distribution.png")
-        
         plt.show()
-        
-        return crosstab
+        return table
 
     def source_per_variety(self):
-        crosstab = pd.crosstab(self.df_all["variety"], self.df_all["source"])
-        self.create_source_variety_table(crosstab, save_path="./reports")
+        table = pd.crosstab(self.df_all["variety"], self.df_all["source"])
+        self.create_source_variety_table(table, save_path="./reports")
 
         self.plot_distribution(
             df=self.df_all,
@@ -210,19 +202,10 @@ class EDA:
             filename="source_by_variety.png"
         )
 
-        return crosstab
+        return table
         
     def sarcasm_sentiment_correlation(self):
-        crosstab = pd.crosstab(self.df_train["Sarcasm"], self.df_train["Sentiment"])
-
-        # Print insight
-        if 1 in crosstab.index and 0 in crosstab.columns:
-            sarcasm_neg = crosstab.loc[1, 0]
-            total_sarcasm = crosstab.loc[1].sum()
-            perc = (sarcasm_neg / total_sarcasm) * 100
-            print(f"\n🔍 {perc:.2f}% of sarcastic texts have negative sentiment")
-            print(f"   ({sarcasm_neg} out of {total_sarcasm} sarcastic instances)")
-
+        table = pd.crosstab(self.df_train["Sarcasm"], self.df_train["Sentiment"])
         self.plot_distribution(
             df=self.df_train,
             column='Sarcasm',
@@ -232,23 +215,15 @@ class EDA:
             ylabel="Sarcasm",
             plot_type='heatmap',
             save=True,
-            highlight=(1, 0) if 1 in crosstab.index and 0 in crosstab.columns else None,
+            highlight=(1, 0) if 1 in table.index and 0 in table.columns else None,
             filename="sarcasm_sentiment_correlation.png"
         )
-
-        return crosstab
+        return table
 
     def sarcasm_imbalance(self):
-        """Sarcasm imbalance analysis with plots"""
         self.df_all["Sarcasm"] = self.df_all["Sarcasm"].astype(int)
-
-        # Overall imbalance
         overall = self.df_all["Sarcasm"].value_counts(normalize=True) * 100
-
-        # Per variety imbalance
         per_variety = pd.crosstab(self.df_all["variety"], self.df_all["Sarcasm"], normalize="index") * 100
-        print("SARcASM IMBALANCE PER VARIETY")
-        print(per_variety.round(2))
 
         self.plot_distribution(
             df=self.df_all,
@@ -261,37 +236,15 @@ class EDA:
             save=True,
             filename="sarcasm_by_variety.png"
         )
-
-        # Per variety per split imbalance
         per_split = pd.crosstab([self.df_all["variety"], self.df_all["split"]],
                                 self.df_all["Sarcasm"],
                                 normalize="index") * 100
-     '''   print("SARcASM IMBALANCE PER VARIETY & SPLIT")
-        print(per_split.round(2))
-
-        # Create combined column for plotting
-        df_temp = self.df_all.copy()
-        df_temp['variety_split'] = df_temp['variety'] + "\n(" + df_temp['split'] + ")"
-
-        self.plot_distribution(
-            df=df_temp,
-            column='variety_split',
-            groupby='Sarcasm',
-            title="Sarcasm Distribution by Variety and Split",
-            xlabel="Variety (Split)",
-            ylabel="Percentage (%)",
-            plot_type='grouped_bar',
-            save=True,
-            filename="sarcasm_by_variety_split.png"
-        )'''
 
         return overall, per_variety, per_split
         
-    # 8. Sentiment imbalance in whole dataset
     def sentiment_imbalance(self):
         self.df_all["Sarcasm"] = self.df_all["Sentiment"].astype(int)
         overall = self.df_all["Sentiment"].value_counts(normalize=True) * 100
-        # Per variety imbalance
         per_variety = pd.crosstab(self.df_all["variety"], self.df_all["Sentiment"], normalize="index") * 100
 
         self.plot_distribution(
@@ -306,26 +259,9 @@ class EDA:
             filename="sentiment_by_variety.png"
         )
 
-        # Per variety per split imbalance
         per_split = pd.crosstab([self.df_all["variety"], self.df_all["split"]],
                                 self.df_all["Sentiment"],
                                 normalize="index") * 100
-'''
-        # Create combined column for plotting
-        df_temp = self.df_all.copy()
-        df_temp['variety_split'] = df_temp['variety'] + "\n(" + df_temp['split'] + ")"
-
-        self.plot_distribution(
-            df=df_temp,
-            column='variety_split',
-            groupby='Sentiment',
-            title="Sentiment Distribution by Variety and Split",
-            xlabel="Variety (Split)",
-            ylabel="Percentage (%)",
-            plot_type='grouped_bar',
-            save=True,
-            filename="sentiment_by_variety_split.png"
-        )'''
         return overall, per_variety, per_split
 
     def pos_for_sarcasm(self, n_samples=500):
@@ -337,42 +273,38 @@ class EDA:
             min(n_samples, len(self.df_all[self.df_all['Sarcasm']==0]))
         ).tolist()
         
-        sarcastic_pos = {}
-        non_sarcastic_pos = {}
-    
+        sarcastic_pos_tags = {}
+        non_sarcastic_pos_tags = {}
         for text in sarcastic_texts:
             doc = nlp(text)
             for token in doc:
-                sarcastic_pos[token.pos_] = sarcastic_pos.get(token.pos_, 0) + 1
+                sarcastic_pos_tags[token.pos_] = sarcastic_pos_tags.get(token.pos_, 0) + 1
 
         for text in non_sarcastic_texts:
             doc = nlp(text)
             for token in doc:
-                non_sarcastic_pos[token.pos_] = non_sarcastic_pos.get(token.pos_, 0) + 1
+                non_sarcastic_pos_tags[token.pos_] = non_sarcastic_pos_tags.get(token.pos_, 0) + 1
         
-        total_sarc = sum(sarcastic_pos.values())
-        total_non = sum(non_sarcastic_pos.values())
-
+        total_sarcarstic_pos_tags = sum(sarcastic_pos_tags.values())
+        total_non_sarcastic_pos_tags = sum(non_sarcastic_pos_tags.values())
         pos_tags = ['NOUN', 'VERB', 'ADJ', 'ADV', 'INTJ', 'PRON', 'ADP']
-        sarc_pcts = [(sarcastic_pos.get(pos, 0) / total_sarc) * 100 for pos in pos_tags]
-        non_pcts = [(non_sarcastic_pos.get(pos, 0) / total_non) * 100 for pos in pos_tags]
+        sarcastic_pcts = [(sarcastic_pos_tags.get(pos, 0) / total_sarcastic_pos_tags) * 100 for pos in pos_tags]
+        non_sarcastic_pcts = [(non_sarcastic_pos_tags.get(pos, 0) / total_non_sarcastic_pos_tags) * 100 for pos in pos_tags]
     
         return {
             'pos_tags': pos_tags,
-            'sarcastic_pcts': sarc_pcts,
-            'non_sarcastic_pcts': non_pcts
-        }, sarcastic_pos, non_sarcastic_pos
+            'sarcastic_pcts': sarcastic_pcts,
+            'non_sarcastic_pcts': non_sarcastic_pcts
+        }, sarcastic_pos_tags, non_sarcastic_pos_tags
     
     def sarcastic_phrases_analysis(self):
         sarcastic_texts = self.df_all[self.df_all['Sarcasm'] == 1]['text']
-
         patterns = [
             'yeah right', 'oh great', 'wonderful', 'brilliant', 'thanks a lot', 
             'as if', 'sure', 'of course', 'how nice', 'how lovely', 'well done',
             'good job', 'nice one', 'really?', 'seriously?', 'obviously',
             'tell me about it', 'big surprise', 'what a surprise', 'fantastic'
         ]
-        
         found_patterns = []
         pattern_counts = []
         
@@ -407,8 +339,7 @@ def get_sarcasm_extremes(per_variety):
         'least_sarcastic': least_sarcastic,
         'least_sarcastic_pct': least_sarcastic_pct
     }
-
-#VARIETY-SPECIFIC SLANG
+    
 def variety_slang(df_all):
     slang_dictionary = {
         'en-AU': [
@@ -444,7 +375,6 @@ def variety_slang(df_all):
     }
 
     results = {}
-
     for en_variety, slang_list in slang_dictionary.items():
         en_variety_texts = df_all[df_all['variety'] == en_variety]['text'].str.lower()
 
