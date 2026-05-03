@@ -11,7 +11,7 @@ nlp = spacy.load('en_core_web_sm')
 warnings.filterwarnings('ignore')
 
 class EDA:
-    def __init__(self, df_all, df_train, df_validation, df_test):
+    def __init__(self, df_train, df_validation, df_test):
         #self.df_all_ = df_all
         self.df_train = df_train
         self.df_validation = df_validation
