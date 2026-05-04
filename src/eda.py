@@ -58,6 +58,7 @@ class EDA:
             ax = percentages.plot(kind='bar', color=colors, edgecolor='black', width=0.7)
             plt.ylabel(ylabel or "Percentage (%)")
             plt.xlabel(xlabel or column)
+            plt.title(title, fontweight='bold')
             plt.xticks(rotation=0)
             plt.ylim(0, 100)
             plt.grid(axis='y', alpha=0.3)
@@ -84,11 +85,12 @@ class EDA:
                 ax.add_patch(rect)
             plt.ylabel(ylabel or column)
             plt.xlabel(xlabel or groupby)
+            plt.title(title, fontweight='bold')
 
         elif plot_type == 'countplot':
             ax = sns.countplot(x=column, data=df, palette='Set2', edgecolor='black')
             plt.ylabel(ylabel or "Count")
-
+            plt.title(title, fontweight='bold')
             for bar in ax.patches:
                 height = bar.get_height()
                 ax.text(bar.get_x() + bar.get_width()/2., height + 5,
