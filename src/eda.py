@@ -12,11 +12,10 @@ warnings.filterwarnings('ignore')
 
 class EDA:
     def __init__(self, df_train, df_validation, df_test):
-        #self.df_all_ = df_all
         self.df_train = df_train
         self.df_validation = df_validation
         self.df_test = df_test
-        self.df_all = pd.concat([df_train, df_validation, df_test])
+        self.df_all = pd.concat([df_train, df_validation, df_test], ignore_index=True)
         os.makedirs("./reports/figures", exist_ok=True)
         os.makedirs("./reports", exist_ok=True)
 
