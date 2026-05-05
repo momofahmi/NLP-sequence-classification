@@ -30,7 +30,7 @@ class EDA:
         ax.set_xlabel(xlabel, fontsize=10)
         ax.set_ylabel(ylabel, fontsize=10)
     
-        plt.title(title, loc='left', pad=10)
+        plt.title(title, pad=10)
         if save:
             self.save_figure(filename=filename or f"{column}_counts.png")
         plt.show()
@@ -45,7 +45,7 @@ class EDA:
         for c in ax.containers:
             ax.bar_label(c, fmt='%.1f%%', padding  =2, fontsize=8)
             
-        plt.title(title, fontweight='semibold',  loc='left')
+        plt.title(title, fontweight='semibold')
         if save:
             self.save_figure(filename=f"{column}_vs_{groupby}_pct.png")
         plt.show()
