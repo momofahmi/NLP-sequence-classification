@@ -18,9 +18,7 @@ class EDA:
         self.df_test = df_test
         self.df_all = pd.concat([df_train, df_validation, df_test], ignore_index=True)
         os.makedirs("./reports/figures", exist_ok=True)
-        os.makedirs("./reports", exist_ok=True)
-
-    =====================================================================
+        os.makedirs("./reports", exist_ok=True)    
 
     def plot_counts(self, df, column, title, xlabel, ylabel,save=False, filename=None):
         fig, ax =plt.subplots(figsize=(7.2, 4.5))
@@ -86,7 +84,7 @@ class EDA:
         if save:
             self.save_figure(filename=f"heatmap_{column}_{groupby}.png")
         plt.show()
-    =====================================================================
+
     def variety_source_dist(self, df):
         self.plot_counts(
             df=df,
