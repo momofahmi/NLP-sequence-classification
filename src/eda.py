@@ -78,7 +78,7 @@ class EDA:
 
         if highlight:
             r, c = highlight
-            rectangle=plt.Rectangle((c, r), 1, 1, fill=False, edgecolor='red', lw=3.5, ls='-')
+            rectangle=plt.Rectangle((c, r), 1, 1, fill=False, edgecolor='cyan', lw=2.5, ls='--')
             ax.add_patch(rectangle)
         plt.title(title,  pad=15)
         plt.tight_layout()
@@ -192,43 +192,41 @@ class EDA:
             filename="sentiment_by_variety.png"
         )
 
-        per_split =  pd.crosstab([self.df_all["variety"], self.df_all["split"]],
-                                self.df_all["Sentiment"],
-                                normalize="index") * 100
+        per_split =  pd.crosstab([self.df_all["variety"], self.df_all["split"]],self.df_all["Sentiment"],  normalize="index") * 100
         return overall, per_variety, per_split
 
     def pos_for_sarcasm(self, n_samples=500):
-          sarcastic_texts = self.df_all[self.df_all['Sarcasm'] == 1]['text'].sample(
-              min(n_samples, len(self.df_all[self.df_all['Sarcasm']==1]))
-          ).tolist()
-          
-          non_sarcastic_texts = self.df_all[self.df_all['Sarcasm'] == 0]['text'].sample(
-              min(n_samples, len(self.df_all[self.df_all['Sarcasm']==0]))
-          ).tolist()
-          
-          sarcastic_pos_tags = {}
-          non_sarcastic_pos_tags = {}
-          for text in sarcastic_texts:
-              doc = nlp(text)
-              for token in doc:
-                  sarcastic_pos_tags[token.pos_] = sarcastic_pos_tags.get(token.pos_, 0) + 1
 
-          for text in non_sarcastic_texts:
+          s_df = self.df_all[self.df_all['Sarcasm'] == 1]
+          n_df = self.df_all[self.df_all['Sarcasm'] == 0]
+          sarc_texts = s_df['text'].sample(min(n_samples, len(s_df))).tolist()
+          non_sarc_texts = n_df['text'].sample(min(n_samples, len(n_df))).tolist()
+          
+          sarc_counts = {}
+          non_sarc_tags = {}
+          for text in sarc_texts:
               doc = nlp(text)
               for token in doc:
-                  non_sarcastic_pos_tags[token.pos_] = non_sarcastic_pos_tags.get(token.pos_, 0) + 1
+                  sarc_counts[token.pos_] = sarc_counts.get(token.pos_, 0) + 1
+
+          # Same for non-sarcastic texts
+          for text in non_sarc_texts:
+
+              doc = nlp(text)
+
+              for token in doc:
+              
+                  non_sarc_tags[token.pos_] = non_sarc_tags.get(token.pos_, 0) + 1
           
-          total_sarcastic_pos_tags = sum(sarcastic_pos_tags.values())
-          total_non_sarcastic_pos_tags = sum(non_sarcastic_pos_tags.values())
-          pos_tags = ['NOUN', 'VERB', 'ADJ', 'ADV', 'INTJ', 'PRON', 'ADP']
-          sarcastic_pcts = [(sarcastic_pos_tags.get(pos, 0) / total_sarcastic_pos_tags) * 100 for pos in pos_tags]
-          non_sarcastic_pcts = [(non_sarcastic_pos_tags.get(pos, 0) / total_non_sarcastic_pos_tags) * 100 for pos in pos_tags]
+          total_sarc_counts = sum(sarc_counts.values())
+          total_non_sarc_counts = sum(non_sarc_tags.values())
+          tags = ['NOUN', 'VERB', 'ADJ', 'ADV', 'INTJ', 'PRON', 'ADP']
+          sarcastic_pcts = [(sarc_counts.get(pos, 0) / total_sarc_counts) * 100 for pos in tags]
+          non_sarcastic_pcts = [100*(non_sarc_tags.get(pos, 0) / total_non_sarc_counts) for pos in tags]
       
           return {
-              'pos_tags': pos_tags,
-              'sarcastic_pcts': sarcastic_pcts,
-              'non_sarcastic_pcts': non_sarcastic_pcts
-          }, sarcastic_pos_tags, non_sarcastic_pos_tags
+              'pos_tags': tags, 'sarcastic_pcts': sarcastic_pcts,'non_sarcastic_pcts': non_sarcastic_pcts
+          }, sarc_counts, non_sarc_tags
 
 
     def sarcasm_imbalance(self):
