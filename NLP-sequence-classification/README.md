@@ -14,3 +14,8 @@ How to get the dataset in your local folder:
 from datasets import load_dataset
 ds = load_dataset("surrey-nlp/BESSTIE-CW-26")
 ```
+
+Note: To train on a GPU in Windows, install the CUDA version of PyTorch using:
+```bash
+python -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
+```
