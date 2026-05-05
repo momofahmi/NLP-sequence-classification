@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.env
+venv/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# HuggingFace cache
+.cache/
+
+# Model checkpoints
+runs/
+checkpoints/
+outputs/
+*.bin
+*.safetensors
+*.pt
+*.pth
+
+# Data 
+data/raw/
+*.parquet
+*.csv
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Report 
+report/*.pdf
