@@ -1,0 +1,38 @@
+{
+  "citation": "",
+  "description": "",
+  "features": {
+    "text": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "sentiment": {
+      "dtype": "float64",
+      "_type": "Value"
+    },
+    "sarcasm": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "variety": {
+      "dtype": "large_string",
+      "_type": "Value"
+    },
+    "input_ids": {
+      "feature": {
+        "dtype": "int32",
+        "_type": "Value"
+      },
+      "_type": "List"
+    },
+    "attention_mask": {
+      "feature": {
+        "dtype": "int8",
+        "_type": "Value"
+      },
+      "_type": "List"
+    }
+  },
+  "homepage": "",
+  "license": ""
+}
