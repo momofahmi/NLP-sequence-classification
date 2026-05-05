@@ -18,56 +18,57 @@ class EDA:
         self.df_test = df_test
         self.df_all = pd.concat([df_train, df_validation, df_test], ignore_index=True)
         os.makedirs("./reports/figures", exist_ok=True)
-        os.makedirs("./reports", exist_ok=True)    
+        os.makedirs("./reports", exist_ok=True)
+
 
     def plot_counts(self, df, column, title, xlabel, ylabel,save=False, filename=None):
         fig, ax =plt.subplots(figsize=(7.2, 4.5))
         sns.countplot(x=column, data= df, palette='viridis', ax=ax, edgecolor ='black')
-        
+
         for c in ax.containers:
             ax.bar_label(c, padding=3, fontsize=9)
 
         ax.set_xlabel(xlabel, fontsize=10)
         ax.set_ylabel(ylabel, fontsize=10)
-    
+
         plt.title(title, pad=10)
         if save:
             self.save_figure(filename=filename or f"{column}_counts.png")
         plt.show()
 
-    def plot_grouped_bar(self, df, column, groupby, title, xlabel, ylabel, save=False):
+    def plot_grouped_bar(self, df, column, groupby, title, xlabel, ylabel, save=False,filename=None):
         table= pd.crosstab(df[column], df[groupby], normalize='index').mul(100)
-        
+
         ax = table.plot(kind='bar', figsize=(8.2, 5), width= 0.7, edgecolor='black')
         ax.set_xlabel(xlabel, fontsize=10)
         ax.set_ylabel(ylabel, fontsize=10)
         ax.set_ylim(0, 115)
         for c in ax.containers:
             ax.bar_label(c, fmt='%.1f%%', padding  =2, fontsize=8)
-            
+
         plt.title(title, fontweight='semibold')
         if save:
             self.save_figure(filename=f"{column}_vs_{groupby}_pct.png")
         plt.show()
 
-    def plot_stacked_bar(self, df, column, groupby, title, xlabel, ylabel, save=False):
+    def plot_stacked_bar(self, df, column, groupby, title, xlabel, ylabel, save=False,filename=None):
         table = pd.crosstab(df[column], df[groupby])
         custom_colors = ['#34495e', '#e67e22', '#27ae60']
-        ax = table.plot(kind='bar', stacked=True, color=custom_colors, 
+        ax = table.plot(kind='bar', stacked=True, color=custom_colors,
                         figsize=(8.4, 4.6), edgecolor='white', linewidth=0.5)
         ax.set_xlabel(xlabel, fontsize=10)
         ax.set_ylabel(ylabel, fontsize=10)
 
         for c in ax.containers:
             ax.bar_label(c, label_type='center', color='white', weight='bold')
-            
+
         plt.title(title)
         if save:
             path = f"stacked_{column}_by_{groupby}.png"
             self.save_figure(filename=path)
         plt.show()
 
-    def plot_heatmap(self, df, column, groupby, title, xlabel, ylabel,highlight=None, save=False):
+    def plot_heatmap(self, df, column, groupby, title, xlabel, ylabel,highlight=None, save=False,filename=None):
         counts_table = pd.crosstab(df[column], df[groupby])
         fig, ax = plt.subplots(figsize=(7.8, 5.2))
 
@@ -84,7 +85,7 @@ class EDA:
         if save:
             self.save_figure(filename=f"heatmap_{column}_{groupby}.png")
         plt.show()
-
+  
     def variety_source_dist(self, df):
         self.plot_counts(
             df=df,
@@ -115,16 +116,16 @@ class EDA:
             ["test"] * len(self.df_test),
             name="split"
         )
-        
+
         table = pd.crosstab(self.df_all["variety"], split_series.values)
         english_varieties = ['en-AU', 'en-IN', 'en-UK']
         filtered_table = table.loc[english_varieties]
         x = np.arange(len(english_varieties))
         width = 0.2
         fig, ax = plt.subplots(figsize=(9, 5))
-        
+
         splits = ['train', 'validation', 'test']
-        colors = ['#4e79a7', '#f28e2b', '#e15759'] 
+        colors = ['#4e79a7', '#f28e2b', '#e15759']
 
         for i, split in enumerate(splits):
             counts = filtered_table[split].values
@@ -135,9 +136,9 @@ class EDA:
         ax.set_xticks(x + width)
         ax.set_xticklabels(english_varieties)
         ax.set_ylabel('Total Count')
-        ax.set_title('Dataset Split by English Variety', loc='left', fontweight='bold')
+        ax.set_title('Dataset Split by English Variety', fontweight='bold')
         ax.legend(frameon=False)
-        
+
         plt.tight_layout()
         if save:
             self.save_figure(filename="split_dist_plot.png")
@@ -158,7 +159,7 @@ class EDA:
         )
 
         return table
-        
+
     def sarcasm_sentiment_correlation(self):
         table = pd.crosstab(self.df_train["Sarcasm"], self.df_train["Sentiment"])
         self.plot_heatmap(
@@ -174,7 +175,7 @@ class EDA:
         )
         return table
 
-        
+
     def sentiment_imbalance(self):
         self.df_all["Sarcasm"] = self.df_all["Sentiment"].astype(int)
         overall=self.df_all["Sentiment"].value_counts(normalize=True) * 100
@@ -197,26 +198,39 @@ class EDA:
         return overall, per_variety, per_split
 
     def pos_for_sarcasm(self, n_samples=500):
-        s_counts = Counter()
-        n_counts = Counter()
+          sarcastic_texts = self.df_all[self.df_all['Sarcasm'] == 1]['text'].sample(
+              min(n_samples, len(self.df_all[self.df_all['Sarcasm']==1]))
+          ).tolist()
+          
+          non_sarcastic_texts = self.df_all[self.df_all['Sarcasm'] == 0]['text'].sample(
+              min(n_samples, len(self.df_all[self.df_all['Sarcasm']==0]))
+          ).tolist()
+          
+          sarcastic_pos_tags = {}
+          non_sarcastic_pos_tags = {}
+          for text in sarcastic_texts:
+              doc = nlp(text)
+              for token in doc:
+                  sarcastic_pos_tags[token.pos_] = sarcastic_pos_tags.get(token.pos_, 0) + 1
 
-        s_texts = self.df_all[self.df_all['Sarcasm'] == 1]['text'].sample(n=n_samples, replace=True)
-        for doc in nlp.pipe(s_texts):
-            s_counts.update([t.pos_ for t in doc])
+          for text in non_sarcastic_texts:
+              doc = nlp(text)
+              for token in doc:
+                  non_sarcastic_pos_tags[token.pos_] = non_sarcastic_pos_tags.get(token.pos_, 0) + 1
+          
+          total_sarcastic_pos_tags = sum(sarcastic_pos_tags.values())
+          total_non_sarcastic_pos_tags = sum(non_sarcastic_pos_tags.values())
+          pos_tags = ['NOUN', 'VERB', 'ADJ', 'ADV', 'INTJ', 'PRON', 'ADP']
+          sarcastic_pcts = [(sarcastic_pos_tags.get(pos, 0) / total_sarcastic_pos_tags) * 100 for pos in pos_tags]
+          non_sarcastic_pcts = [(non_sarcastic_pos_tags.get(pos, 0) / total_non_sarcastic_pos_tags) * 100 for pos in pos_tags]
+      
+          return {
+              'pos_tags': pos_tags,
+              'sarcastic_pcts': sarcastic_pcts,
+              'non_sarcastic_pcts': non_sarcastic_pcts
+          }, sarcastic_pos_tags, non_sarcastic_pos_tags
 
-        n_texts = self.df_all[self.df_all['Sarcasm'] == 0]['text'].sample(n=n_samples, replace=True)
-        for doc in nlp.pipe(n_texts):
-            n_counts.update([t.pos_ for t in doc])
 
-        tags = ['NOUN', 'VERB', 'ADJ', 'ADV', 'PRON']
-        s_total = sum(s_counts.values())
-        n_total = sum(n_counts.values())
-        
-        return {
-            'pos_tags': tags,
-            'sarcastic_pcts': [(s_counts[p]/s_total)*100 for p in tags],
-            'non_sarcastic_pcts': [(n_counts[p]/n_total)*100 for p in tags]
-        }
     def sarcasm_imbalance(self):
         self.df_all["Sarcasm"] = self.df_all["Sarcasm"].astype(int)
         overall = self.df_all["Sarcasm"].value_counts(normalize=True) * 100
@@ -237,25 +251,25 @@ class EDA:
                                 normalize="index") * 100
 
         return overall, per_variety, per_split
-    
+
     def sarcastic_phrases_analysis(self):
         sarcastic_texts = self.df_all[self.df_all['Sarcasm'] == 1]['text']
         patterns = [
-            'yeah right', 'oh great', 'wonderful', 'brilliant', 'thanks a lot', 
+            'yeah right', 'oh great', 'wonderful', 'brilliant', 'thanks a lot',
             'as if', 'sure', 'of course', 'how nice', 'how lovely', 'well done',
             'good job', 'nice one', 'really?', 'seriously?', 'obviously',
             'tell me about it', 'big surprise', 'what a surprise', 'fantastic'
         ]
         matched = []
         pattern_counts = []
-        
+
         for pattern in patterns:
             count = sarcastic_texts.str.lower().str.contains(pattern).sum()
             if count > 0:
                 print(f"   '{pattern}': found in {count} sarcastic texts")
                 matched.append(pattern)
                 pattern_counts.append(count)
-        
+
         examples_by_variety = {}
         for variety in ['en-AU', 'en-IN', 'en-UK']:
             examples = self.df_all[(self.df_all['variety'] == variety) & (self.df_all['Sarcasm'] == 1)]['text'].head(3).tolist()
@@ -266,7 +280,7 @@ class EDA:
             'pattern_counts': pattern_counts
         }, examples_by_variety
 
-    
+
     def save_figure(self, save_path="./reports/figures", filename="plot.png"):
         folder = Path(save_path)
         if not folder.exists():
@@ -278,17 +292,17 @@ class EDA:
 def get_sarcasm_extremes(per_variety):
     most_sarcastic = per_variety[1].idxmax()
     least_sarcastic = per_variety[1].idxmin()
-    
+
     most_sarcastic_pct = per_variety.loc[most_sarcastic, 1]
     least_sarcastic_pct = per_variety.loc[least_sarcastic, 1]
-    
+
     return {
         'most_sarcastic': most_sarcastic,
         'most_sarcastic_pct': most_sarcastic_pct,
         'least_sarcastic': least_sarcastic,
         'least_sarcastic_pct': least_sarcastic_pct
     }
-    
+
 def variety_slang(df_all):
     slang_dictionary = {
         'en-AU': [
