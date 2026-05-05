@@ -78,7 +78,7 @@ class EDA:
 
         if highlight:
             r, c = highlight
-            rectangle=plt.Rectangle((c, r), 1, 1, fill=False, edgecolor='cyan', lw=2.5, ls='--')
+            rectangle=plt.Rectangle((c, r), 1, 1, fill=False, edgecolor='red', lw=3.5, ls='-')
             ax.add_patch(rectangle)
         plt.title(title,  pad=15)
         plt.tight_layout()
