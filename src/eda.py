@@ -177,7 +177,7 @@ class EDA:
 
 
     def sentiment_imbalance(self):
-        self.df_all["Sarcasm"] = self.df_all["Sentiment"].astype(int)
+        self.df_all["Sentiment"] = self.df_all["Sentiment"].astype(int)
         overall=self.df_all["Sentiment"].value_counts(normalize=True) * 100
         per_variety = pd.crosstab(self.df_all["variety"], self.df_all["Sentiment"], normalize="index") * 100
 
