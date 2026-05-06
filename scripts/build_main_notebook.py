@@ -79,9 +79,9 @@ cells.append(code(r'''import os, sys, subprocess, pathlib
 IN_COLAB = "google.colab" in sys.modules
 
 if IN_COLAB:
-    REPO_URL  = os.environ.get("REPO_URL", "https://github.com/TheFinix13/NLP-coursework.git")
-    BRANCH    = os.environ.get("REPO_BRANCH", "main")
-    REPO_DIR  = "/content/NLP-coursework"
+    REPO_URL  = os.environ.get("REPO_URL", "https://github.com/momofahmi/NLP-sequence-classification.git")
+    BRANCH    = os.environ.get("REPO_BRANCH", "fiyin/model-pipeline")
+    REPO_DIR  = "/content/NLP-sequence-classification"
     if not os.path.exists(REPO_DIR):
         subprocess.run(["git", "clone", "-b", BRANCH, REPO_URL, REPO_DIR], check=True)
     os.chdir(REPO_DIR)

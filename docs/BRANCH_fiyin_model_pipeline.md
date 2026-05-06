@@ -51,7 +51,7 @@ Bring the BESSTIE coursework work into one coherent structure:
 | `2.3_LoRA_Preparation_Omar.ipynb` | Prep / vocab / linguistic exploration. |
 | `2.3_LoRA_Adapters_Mohamed.ipynb` | LoRA training loop; **first cell = Colab setup**. |
 
-**Colab:** open from GitHub via *Open in Colab*. The public mirror at `TheFinix13/NLP-coursework` (branch `main`) is the canonical clone target; the private team repo `momofahmi/NLP-sequence-classification` is also kept up to date for git-based workflows.
+**Colab:** open from GitHub via *Open in Colab*. The public mirror at `momofahmi/NLP-sequence-classification` (branch `main`) is the canonical clone target; the private team repo `momofahmi/NLP-sequence-classification` is also kept up to date for git-based workflows.
 
 ---
 

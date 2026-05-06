@@ -33,7 +33,7 @@ Usage (local):
     python scripts/main.py
 
 Usage (Colab):
-    !git clone https://github.com/TheFinix13/NLP-coursework.git
+    !git clone https://github.com/momofahmi/NLP-sequence-classification.git
     %cd NLP-coursework
     !pip install -q -r requirements.txt
     !python scripts/main.py
