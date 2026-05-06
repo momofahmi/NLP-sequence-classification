@@ -172,7 +172,11 @@ def benchmark_hf_encoder(model_id: str, device: str) -> List[LatencyRow]:
 #  OPT-1.3B + LoRA adapter                                                     #
 # --------------------------------------------------------------------------- #
 def benchmark_lora(base_id: str, adapter_id: str, device: str) -> List[LatencyRow]:
+    import os, sys
     import torch
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from _compat import ensure_peft_compat
+    ensure_peft_compat()
     from peft import PeftModel
     from transformers import AutoModelForSequenceClassification, AutoTokenizer
 

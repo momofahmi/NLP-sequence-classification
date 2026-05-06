@@ -88,6 +88,9 @@ if IN_COLAB:
     if REPO_DIR not in sys.path:
         sys.path.insert(0, REPO_DIR)
     subprocess.run(["pip", "install", "-q", "-r", "requirements.txt"], check=True)
+    # Colab ships torchao==0.10.0; recent peft requires >=0.16.0 and raises on import.
+    # We don't use torchao for plain LoRA, so just remove it.
+    subprocess.run(["pip", "uninstall", "-y", "-q", "torchao"], check=False)
 else:
     PROJECT_ROOT = pathlib.Path.cwd()
     while not (PROJECT_ROOT / "requirements.txt").exists() and PROJECT_ROOT.parent != PROJECT_ROOT:

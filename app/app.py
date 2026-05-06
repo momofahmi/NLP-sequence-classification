@@ -1,5 +1,10 @@
 # Mohamed Fahmi Ahmed
 
+import os, sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "scripts"))
+from _compat import ensure_peft_compat
+ensure_peft_compat()
+
 import gradio as gr
 import pandas as pd
 import torch

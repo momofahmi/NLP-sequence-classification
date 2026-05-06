@@ -27,8 +27,14 @@ from typing import Dict, List
 
 import torch
 from datasets import load_dataset
-from peft import PeftModel
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _compat import ensure_peft_compat
+ensure_peft_compat()
+
+from peft import PeftModel  # noqa: E402
+from transformers import AutoModelForSequenceClassification, AutoTokenizer  # noqa: E402
 
 DATASET_ID = "surrey-nlp/BESSTIE-CW-26"
 VARIETIES = ["en-UK", "en-AU", "en-IN"]

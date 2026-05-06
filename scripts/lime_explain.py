@@ -56,6 +56,9 @@ def make_lora_predict_fn(base_id: str, variety: str):
     """Return a `predict_proba` callable that takes List[str] and returns N x 2."""
     import numpy as np
     import torch
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from _compat import ensure_peft_compat
+    ensure_peft_compat()
     from peft import PeftModel
     from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
