@@ -26,3 +26,29 @@ def get_BESSTIE_splits():
   df_all = pd.concat([df_train, df_val, df_test], ignore_index=True)
 
   return df_all, df_train, df_val,df_test
+
+def get_all_varieties(ds, split: str):
+    "Returns train, test, validation split for all varieties"
+    return ds[split]
+
+def get_inner_circle_pool(ds, split: str):
+    "Groups UK and AU samples"
+    return ds[split].filter(lambda x: x["variety"] in ["en-UK", "en-AU"])
+
+def get_train_conditions(ds):
+    "Returns the 5 trains splits needed in a dictionary format"
+    return {
+        "uk_only" : get_variety_split(ds, "en-UK", "train"),
+        "au_only" : get_variety_split(ds, "en-AU", "train"),
+        "in_only" : get_variety_split(ds, "en-IN", "train"),
+        "inner_pool": get_inner_circle_pool(ds, "train"),
+        "all": get_all_varieties(ds, "train")
+    }
+
+def get_test_conditions(ds):
+    "Returns the 5 trains splits needed in a dictionary format"
+    return {
+        "uk_only" : get_variety_split(ds, "en-UK", "test"),
+        "au_only" : get_variety_split(ds, "en-AU", "test"),
+        "in_only" : get_variety_split(ds, "en-IN", "test"),
+    }
