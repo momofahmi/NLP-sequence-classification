@@ -39,3 +39,16 @@ pip install -r requirements.txt
 from datasets import load_dataset
 ds = load_dataset("surrey-nlp/BESSTIE-CW-26")
 ```
+
+## Run the whole pipeline in one command
+
+Two equivalent entry points:
+
+| Format | Command | Time |
+|---|---|---|
+| Notebook | open `notebooks/main.ipynb` (Colab T4 recommended) | ~40s default, ~80 min with all flags on |
+| Pure-Python script | `python scripts/main.py` | same |
+
+Both load Joel's canonical results from `reports/results/roberta_weighted/` and `reports/results/roberta_sentiment/all_pool.json` to reproduce every figure/table in the report. Set `FROM_SCRATCH=True`, `RUN_ERROR_ANALYSIS=True`, and `RUN_BENCHMARK=True` near the top of either file to retrain and re-run inference on a Colab T4.
+
+> Both files inline every helper function used by the team's domain notebooks (`tokenize`, `WeightedTrainer`, `train_roberta`, `evaluate_on_testset`, `train_lora_adapter`, etc.) so the marker can read the entire pipeline without jumping between files. Regenerate them with `python scripts/build_main_notebook.py && python scripts/build_main_script.py`.
