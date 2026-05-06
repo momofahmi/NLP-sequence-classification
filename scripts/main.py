@@ -715,12 +715,30 @@ else:
           "Using committed reports/results/q4_errors.json.")
 
 
-# # load the curated errors file
+# # load the curated errors file. If it exists but has 0 explanations
+# # (because an earlier extract-errors run wrote over the curated file),
+# # automatically rebuild it from the report - no need to flip flags.
 errors_path = Path("reports/results/q4_errors.json")
+build_script = Path("scripts/q4_build_curated_errors.py")
+
+def _count_explained(path):
+    if not path.exists():
+        return 0
+    return sum(
+        1 for e in json.load(open(path)).get("examples", [])
+        if e.get("explanation", "").strip()
+    )
+
+n_explained = _count_explained(errors_path)
+if n_explained == 0 and build_script.exists():
+    print("q4_errors.json missing or has no explanations - rebuilding from "
+          "the 10 examples in section 4 of the report.")
+    subprocess.run([sys.executable, 'scripts/q4_build_curated_errors.py'], check=True)
+    n_explained = _count_explained(errors_path)
+
 if errors_path.exists():
     payload = json.load(open(errors_path))
     examples = payload["examples"] if isinstance(payload, dict) else payload
-    n_explained = sum(1 for e in examples if e.get("explanation", "").strip())
     print(f"Loaded {len(examples)} examples "
           f"({n_explained} with explanations, "
           f"{len(examples) - n_explained} held-out for the few-shot test). "
@@ -731,8 +749,8 @@ if errors_path.exists():
         preview["explanation"] = preview["explanation"][:240] + "..."
     print(json.dumps(preview, indent=2, ensure_ascii=False))
 else:
-    print("q4_errors.json not found. Run with RUN_ERROR_ANALYSIS=True to "
-          "build it from the 10 examples in the report.")
+    print("q4_errors.json not found. Run `!git pull` to fetch the curated "
+          "build script and re-run this cell.")
 
 
 # # few-shot eval on the 6 held-out errors with a small instruction-tuned judge.
@@ -788,9 +806,24 @@ else:
 # ============================================================================
 
 
+# # benchmark wants three model flags - if we don't pass them every model
+# # is skipped. Defaults below match what the report Table 11 reports.
+import subprocess as _sp
+
 benchmark_script = Path("scripts/benchmark_inference.py")
+tfidf_vec = Path("models/tfidf/tfidf_vectorizer_yusrah_omar.pkl")
+tfidf_clf = Path("models/baseline/logistic_regression_model.pkl")
+benchmark_args = [
+    "--roberta", "roberta-base",
+    "--base-llm", "facebook/opt-1.3b",
+    "--lora", "momofahmi/besstie-lora-en-au-opt-1.3b",
+]
+if tfidf_vec.exists() and tfidf_clf.exists():
+    benchmark_args = ["--tfidf-vec", str(tfidf_vec),
+                      "--tfidf-clf", str(tfidf_clf)] + benchmark_args
+
 if RUN_BENCHMARK and benchmark_script.exists():
-    subprocess.run([sys.executable, 'scripts/benchmark_inference.py'], check=True)
+    _sp.run([sys.executable, str(benchmark_script), *benchmark_args], check=True)
 elif RUN_BENCHMARK:
     print(f"{benchmark_script} not found - run `!git pull` to fetch the "
           "latest version of the repo and re-run this cell.")
