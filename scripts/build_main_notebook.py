@@ -823,15 +823,41 @@ else:
     print("Run with RUN_ERROR_ANALYSIS=True to populate reports/results/q4_errors.json")
 '''))
 
-cells.append(code(r'''# # few-shot eval on the 6 held-out errors with LLaMA-3.2-1B-Instruct
-if RUN_ERROR_ANALYSIS:
-    %run scripts/q4_few_shot_eval.py
+cells.append(code(r'''# # few-shot eval on the 6 held-out errors with a small instruction-tuned judge.
+# # Requires 4 of the 10 examples in q4_errors.json to have a hand-written
+# # `explanation` field (see reports/results/q4_error_analysis.md for the format).
+errors_path = Path("reports/results/q4_errors.json")
+n_explained = 0
+if errors_path.exists():
+    payload = json.load(open(errors_path))
+    n_explained = sum(
+        1 for e in payload.get("examples", []) if e.get("explanation", "").strip()
+    )
+
+if RUN_ERROR_ANALYSIS and n_explained >= 4:
+    %run scripts/q4_few_shot_eval.py --in reports/results/q4_errors.json
+elif RUN_ERROR_ANALYSIS and errors_path.exists():
+    print(f"Found {n_explained}/4 explained examples in {errors_path}.")
+    print("Open the file, add a one-paragraph `explanation` to any 4 of the 10 "
+          "entries (template in reports/results/q4_error_analysis.md), save, "
+          "then re-run this cell.")
+elif RUN_ERROR_ANALYSIS:
+    print("q4_errors.json not found. The earlier cell should have created it; "
+          "if it skipped (RUN_ERROR_ANALYSIS was False on that run), set "
+          "RUN_ERROR_ANALYSIS=True at the top of the notebook and re-run.")
 else:
     print("Skipping few-shot re-test (RUN_ERROR_ANALYSIS=False).")
 '''))
 
-cells.append(code(r'''if RUN_LIME:
-    %run scripts/lime_explain.py
+cells.append(code(r'''# # LIME token-importance explanations for the 4 explained errors.
+if RUN_LIME and n_explained >= 1:
+    Path("reports/figures/lime").mkdir(parents=True, exist_ok=True)
+    %run scripts/lime_explain.py --model lora --in reports/results/q4_errors.json --out-dir reports/figures/lime/
+elif RUN_LIME and errors_path.exists():
+    print("LIME explains entries whose `explanation` field is non-empty. "
+          "None found in q4_errors.json yet, so nothing to plot.")
+elif RUN_LIME:
+    print("q4_errors.json not found - run the error-extraction step first.")
 else:
     print("Skipping LIME (RUN_LIME=False).")
 '''))

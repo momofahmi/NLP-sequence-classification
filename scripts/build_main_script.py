@@ -9,7 +9,7 @@ that mirror the markdown structure. Useful as Joel's worst-case fallback if
 the notebook orchestrator misbehaves on a marker's machine.
 """
 from __future__ import annotations
-import json, re
+import json, re, shlex
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -87,11 +87,15 @@ def strip_magics(src: str) -> str:
     for line in src.split("\n"):
         s = line.lstrip()
         if s.startswith("%run "):
-            script = s[len("%run "):].strip()
+            tail = s[len("%run "):].strip()
+            parts = shlex.split(tail) if tail else []
             indent = line[: len(line) - len(s)]
-            out.append(f"{indent}subprocess.run([sys.executable, '{script}'], check=True)")
+            args_repr = ", ".join(repr(p) for p in parts)
+            out.append(
+                f"{indent}subprocess.run([sys.executable, {args_repr}], check=True)"
+            )
         elif s.startswith("%") or s.startswith("!"):
-            out.append("# " + line + "  # (skipped — IPython magic)")
+            out.append("# " + line + "  # (skipped - IPython magic)")
         else:
             out.append(line)
     return "\n".join(out)
