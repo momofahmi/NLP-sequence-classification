@@ -277,7 +277,16 @@ class EDA:
             'found_patterns': matched,
             'pattern_counts': pattern_counts
         }, examples_by_variety
+        
+    def sarcasm_by_source(self):
+        tab = pd.crosstab(self.df_all["source"], self.df_all["Sarcasm"])
+        return tab
 
+    def sentiment_by_source(self):
+        cb_table = pd.crosstab(
+            self.df_all["source"], 
+            self.df_all["Sentiment"])
+        return cb_table
 
     def save_figure(self, save_path="./reports/figures", filename="plot.png"):
         folder = Path(save_path)
