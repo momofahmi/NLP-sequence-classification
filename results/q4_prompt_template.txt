@@ -1,0 +1,33 @@
+You are a sarcasm detector for English text. Sarcasm is saying the opposite of what is meant, often to mock, criticise, or express frustration. Read each text carefully and decide whether it is sarcastic.
+
+Here are four examples with explanations:
+
+Example 1:
+Text: "It's great, barely any customers and the cinemas are always empty."
+Is this sarcastic? Yes
+Explanation: This text is sarcastic. The speaker says 'It's great' but immediately describes facts that contradict the positive evaluation: 'barely any customers' and 'always empty' are bad outcomes for a cinema. The explicit positive/negative reversal in the same sentence is the cue.
+
+Example 2:
+Text: "We recently spent a fair bit of money on a very nice dining table and sturdy comfortable dining chairs... So to answer your question we eat on the lounge watching our stories."
+Is this sarcastic? Yes
+Explanation: This text is sarcastic. The structure 'we bought X, so we do Y' where Y contradicts X (paying for nice dining furniture but eating on the lounge anyway) is a classic self-mocking sarcastic confession. The phrase 'so to answer your question' sets up the punchline.
+
+Example 3:
+Text: "Not a shill mate. Just someone that's pissed off his rent has increased by 50% since 2020."
+Is this sarcastic? No
+Explanation: This text is not sarcastic. The speaker explicitly clarifies their position with 'Not a shill mate' and then describes a real grievance ('rent has increased by 50% since 2020'). The emotion ('pissed off') is a sincere reaction, not an ironic mask.
+
+Example 4:
+Text: "5 weeks of annual leave is standard for shift workers.
+The other 4 weeks are usually ADOs from working shifts above the standard 38 hour week.
+It's a pretty shit gig.
+They get spat on, punched, and kicked.
+They see murders, assaults and the worst of humanity.
+On top of that, they have to make split-second decisions while everyone else gets 10 months to tear it apart
+You get shat on by the community, management, and the government when something you had 2 seconds to decide in the heat of the moment."
+Is this sarcastic? No
+Explanation: This text is not sarcastic. It is a factual statement about Australian shift-worker leave entitlements. There is no positive/negative reversal and no exaggeration; the numbers and acronyms (ADOs, 38 hour week) are informative, not ironic.
+
+Now classify this new text:
+Text: "<text to classify>"
+Is this sarcastic?
