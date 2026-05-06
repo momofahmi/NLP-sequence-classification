@@ -3,25 +3,27 @@
 > Submission file: `report_PG##.pdf` (replace `##` with the group number).
 > Hard caps from the brief: **25 pages of content** (excluding refs and appendix), plus a title page with declaration of originality.
 
-This file is the structural source-of-truth. The Google Doc at <https://docs.google.com/document/d/1tgx2yC--QY4OnMiS2L-xbYXM3UQQ6u7ChX-118BzdIM> should match this outline section-for-section before the team exports to PDF.
+This file is the structural source-of-truth. The Google Doc at [https://docs.google.com/document/d/1tgx2yC--QY4OnMiS2L-xbYXM3UQQ6u7ChX-118BzdIM](https://docs.google.com/document/d/1tgx2yC--QY4OnMiS2L-xbYXM3UQQ6u7ChX-118BzdIM) should match this outline section-for-section before the team exports to PDF.
 
 ---
 
 ## Page budget (firm — keep 1-page slack for figures)
 
-| Section | Marks | Max pages | Soft target |
-|---|---:|---:|---:|
-| Title + declaration | — | 1 | 1 |
-| §1 Data analysis (1.1 + 1.2) | 15 | 4 | 3.5 |
-| §2 Experimentation (2.1 + 2.2 + 2.3) | 40 | 6 | 6 |
-| §3 Evaluation | 15 | 5 | 4.5 |
-| §4 Error analysis & few-shot | 10 | 4 | 3.5 |
-| §5.1 Deployment endpoint | 15 | 5 | 4 |
-| §5.2 Efficiency | 5 | 1 | 1 |
-| References | — | unlimited | 1 |
-| **Total content** | **100** | **25** | **23.5** |
 
-If we exceed 25 pages of content, the over-spill section to trim first is **§2.3 LoRA** (Mohamed's draft is detailed and can lose ~half a page on Study 1 ablation table commentary), then **§4** discussion paragraphs.
+| Section                             | Marks   | Max pages | Soft target |
+| ----------------------------------- | ------- | --------- | ----------- |
+| Title + declaration                 | —       | 1         | 1           |
+| 1 Data analysis (1.1 + 1.2)         | 15      | 4         | 3.5         |
+| 2 Experimentation (2.1 + 2.2 + 2.3) | 40      | 6         | 6           |
+| 3 Evaluation                        | 15      | 5         | 4.5         |
+| 4 Error analysis & few-shot         | 10      | 4         | 3.5         |
+| 5.1 Deployment endpoint             | 15      | 5         | 4           |
+| 5.2 Efficiency                      | 5       | 1         | 1           |
+| References                          | —       | unlimited | 1           |
+| **Total content**                   | **100** | **25**    | **23.5**    |
+
+
+If we exceed 25 pages of content, the over-spill section to trim first is **2.3 LoRA** (Mohamed's draft is detailed and can lose ~half a page on Study 1 ablation table commentary), then **4** discussion paragraphs.
 
 ---
 
@@ -37,9 +39,10 @@ Each section lists: (a) the heading exactly as it should appear in the doc, (b) 
 - Submission date: 6 May 2026
 - **Declaration of originality** (template on My Surrey → Exams and Assessments → Assessments) — every member signs (digital signature, scanned image, or Adobe sign feature).
 
-### §1 — Data analysis and visualisation (15 marks, max 4 pages)
+### 1 — Data analysis and visualisation (15 marks, max 4 pages)
 
 #### 1.1 Distribution and class imbalance (5 marks)
+
 - **Source:** existing prose in the docx (Yusrah). Already complete.
 - **Figures:** `reports/figures/q1_1_*.png` — pick the strongest 4–5:
   - variety distribution
@@ -50,20 +53,23 @@ Each section lists: (a) the heading exactly as it should appear in the doc, (b) 
 - **Tables:** the 2 small tables Yusrah references (Tables 1, 2 — sentiment/sarcasm by source).
 
 #### 1.2 Vocabulary analysis (10 marks)
+
 - **Source:** `reports/results/q1_2_vocab_overlap.md` (full prose ready, paste).
 - **Figure:** `notebooks/reports/figures/vocabulary_similarity_heatmap.png`.
 - **Table:** Table 1.2.1 (Jaccard + TF-IDF cosine, three pairs).
 - **Required paragraph from the brief:** definition of *linguistic distance* + comment on whether the variety gap is superficial or grammatical — already written.
 
-### §2 — Experimentation (40 marks, max 6 pages)
+### 2 — Experimentation (40 marks, max 6 pages)
 
 #### 2.1 Baseline / PTLM gap (10 marks)
+
 - **Source:** existing prose in the docx (Yusrah). Already complete; mostly polish.
 - **Tables:** Table a (Test set performance — TF-IDF+LR for sentiment + sarcasm per variety + pooled).
 - **Figures:** TF-IDF + LR Macro-F1 comparison bar chart vs RoBERTa pooled (a single chart is enough).
 - **Action:** drop the un-referenced placeholder *"MACRO F1 COMPARISON NEEDED"* once Joel's RoBERTa numbers are in §2.2 — the §2.1 comparison numbers come from there.
 
 #### 2.2 Cross-variety evaluation — RoBERTa (15 marks)
+
 - **Source:** Joel's RoBERTa notebook (`task-2.2.ipynb`, currently on `origin/Joel`) + the cross-variety matrix figure.
 - **Tables:**
   - Table 2.2.1 — variety-only 3×3 cross-variety Macro-F1 (mean over seeds 42, 123).
@@ -74,6 +80,7 @@ Each section lists: (a) the heading exactly as it should appear in the doc, (b) 
 - **Action:** Joel writes the 2-paragraph analysis (which condition wins each test column, transferability commentary). Use language in line with the BESSTIE paper finding (cross-variety degradation, en-IN hardest).
 
 #### 2.3 LoRA adapters (15 marks)
+
 - **Source:** existing prose in the docx (Mohamed). Already complete.
 - **Tables:**
   - Table 2 (Cross-variety Macro-F1 ± std).
@@ -84,23 +91,26 @@ Each section lists: (a) the heading exactly as it should appear in the doc, (b) 
   - `results/opt1.3B/ablation.png` (optional — only if Study 1 is kept in the main text rather than appendix).
 - **Action:** trim Mohamed's Study 1 ablation discussion if total content exceeds 25 pages.
 
-### §3 — Evaluation (15 marks, max 5 pages)
+### 3 — Evaluation (15 marks, max 5 pages)
 
 This section is **where the brief explicitly demands per-class precision/recall + confusion matrices for the best models of each setup**. Structure as three sub-sub-sections, one per model family.
 
 #### 3.1 Classical baseline — Logistic Regression + TF-IDF
+
 - **Source:** existing prose in the docx (Yusrah). Already complete.
 - **Figures:** Sarcasm CM, Sentiment CM, Precision/Recall bar chart per class.
 
 #### 3.2 RoBERTa — best cross-variety condition
+
 - **Source:** Joel's `weighted_figures/confusion_matrix_best.png` + the per-class metrics from his JSON.
 - **Action:** ~½ page of prose stating which row of the matrix won (likely `all` or `inner_pool`), per-class precision/recall, where it fails (en-IN sarcasm).
 
 #### 3.3 LoRA — best adapter, in-variety
+
 - **Source:** `results/opt1.3B/confusion_matrices.png` (3-panel, one per variety adapter on its own test set).
 - **Action:** ~½ page of prose with per-class precision/recall pulled from Mohamed's notebook's classification report.
 
-### §4 — Sarcasm explanation & error analysis (10 marks, max 4 pages)
+### 4 — Sarcasm explanation & error analysis (10 marks, max 4 pages)
 
 - **Source:** `reports/results/q4_error_analysis.md` (template ready).
 - **Owner:** Mohammad.
@@ -111,15 +121,17 @@ This section is **where the brief explicitly demands per-class precision/recall 
   4. (Optional, recommended) `python scripts/lime_explain.py --model lora --in reports/results/q4_errors.json` → `reports/figures/lime/`.
 - **Sub-sections:** 4.1 Errors table, 4.2 Linguistic explanations, 4.3 The 4-shot prompt, 4.4 Re-test results (before/after table), 4.5 Discussion, 4.6 (optional) LIME panels.
 
-### §5 — Deployment & efficiency (20 marks)
+### 5 — Deployment & efficiency (20 marks)
 
 #### 5.1 Endpoint (15 marks, max 5 pages)
+
 - **Source:** `reports/results/q5_1_deployment.md` (full prose ready, paste).
 - **Owner:** Mohamed (app already built); Fiyin/anyone can paste the prose.
 - **Figures:** 3 screenshot placeholders flagged in the doc.
 - **Action:** capture the 3 screenshots from the running app — see `app/README.md` for instructions.
 
 #### 5.2 Efficiency (5 marks, max 1 page)
+
 - **Source:** `reports/results/q5_2_efficiency.md` (template + table skeleton ready).
 - **Action:** run `python scripts/benchmark_inference.py --tfidf-vec ... --tfidf-clf ... --roberta roberta-base --base-llm facebook/opt-1.3b --lora momofahmi/besstie-lora-en-uk-opt-1.3b` once on Colab T4, paste 9 numbers into Table 5.2.1.
 
@@ -153,20 +165,23 @@ Use this for material that is referenced from the body but doesn't fit. Good can
 The Google Doc is the rendering target. To make it look "decent and formal", apply these settings *once*, in this order:
 
 ### 1. Page setup (File → Page setup)
+
 - Page size: **A4** (the brief is from a UK university; A4 is safer than Letter).
 - Margins: **2.0 cm** all sides (default Google value is fine).
 - Orientation: Portrait.
 
 ### 2. Default styles (Format → Paragraph styles → Options → Save my current styles as my default)
+
 - **Body text**: Arial 11 (or Calibri 11) — single spacing, justified.
-- **Heading 1**: Arial 16 bold, "Space before 18 pt, after 6 pt", `1` numbering style. Used for **§1, §2, §3, §4, §5**.
-- **Heading 2**: Arial 13 bold, "Space before 12 pt, after 4 pt". Used for **§1.1, §2.1**, etc.
-- **Heading 3**: Arial 11 bold (italic optional), no extra spacing. Used for sub-sub-sections (§3.1, §4.6).
+- **Heading 1**: Arial 16 bold, "Space before 18 pt, after 6 pt", `1` numbering style. Used for **1, 2, 3, 4, 5**.
+- **Heading 2**: Arial 13 bold, "Space before 12 pt, after 4 pt". Used for **1.1, 2.1**, etc.
+- **Heading 3**: Arial 11 bold (italic optional), no extra spacing. Used for sub-sub-sections (3.1, 4.6).
 - **Caption**: Arial 9 italic, centred. Used under figures and tables.
 
 To save the default: write one Heading 1 with the right size/spacing, click in it, then `Format → Paragraph styles → Heading 1 → Update Heading 1 to match`. Repeat for every style. Then `Format → Paragraph styles → Options → Save my current styles as my default`.
 
 ### 3. Title page (page 1)
+
 - Centred block, vertically centred (use a few empty lines or a single-cell table set to "vertical align middle"):
   ```text
   Group: PG## — <Group Name>
@@ -186,16 +201,20 @@ To save the default: write one Heading 1 with the right size/spacing, click in i
 - Insert a **page break** at the end (`Cmd+Enter` on Mac, `Ctrl+Enter` on Windows) so §1 starts at the top of page 2.
 
 ### 4. Page numbers (Insert → Page numbers)
+
 - Pick the variant that **starts numbering on page 2** (so the title page is unnumbered) and shows the number in the footer.
 
 ### 5. Headings & numbering
+
 - Use the **Heading 1 / Heading 2 / Heading 3** styles from the dropdown, **not** manual bold/large text. This is what generates the table of contents and the export-to-PDF bookmarks.
 - Number sections manually as `1.`, `1.1`, `1.1.1` to match this outline (Google Docs has auto-numbering under `Format → Bullets & numbering → List options`, but it is finicky — manual numbering is more reliable).
 
 ### 6. Table of contents (optional but professional)
+
 - After the title page, insert `Insert → Table of contents → "with page numbers"`. Right-click and "Update table of contents" before exporting to PDF. Keep it on its own page; it does **not** count against the 25-page content limit because it's metadata.
 
 ### 7. Figures
+
 - Insert as `Insert → Image → Upload from computer`. Set **Wrap text → In line** for predictable layout.
 - Caption format: directly below the figure, centred, italic, **9 pt**:
   ```
@@ -204,18 +223,22 @@ To save the default: write one Heading 1 with the right size/spacing, click in i
 - Number figures `<section>.<figure_number>` (e.g. Figure 2.2.1, Figure 4.6.1). Keeps them findable when teammates edit.
 
 ### 8. Tables
+
 - Use **Insert → Table**, not screenshots. Header row: bold + light-grey background (`Table → Table properties → Cell background colour → 10% grey`).
 - Right-align numeric columns, left-align text columns. Centre column headers.
 - Caption *above* the table, same style as figure captions.
 
-### 9. Code blocks (only inside §2.3 / §4.3 / §5.1 if needed)
+### 9. Code blocks (only inside 2.3 / 4.3 / 5.1 if needed)
+
 - Use a **single-cell table** with grey background and the **Consolas** or **Courier New** font, 9 pt. This survives PDF export better than Google's "Code block" which sometimes mangles in print.
 
 ### 10. References
+
 - Use **numbered list** (`1.`, `2.`, …) — match the in-text citation style.
 - Cite in the body as `[1]`, `[1, 4]`, etc., or `(Srirag et al., 2025)` — pick one and apply throughout.
 
 ### 11. Final pre-export pass
+
 - Turn on `View → Show ruler` and `View → Show non-printing characters` once to spot stray double spaces / extra blank lines.
 - Run `Tools → Spelling and grammar` over the whole doc.
 - `File → Download → PDF (.pdf)` and verify:
@@ -237,3 +260,4 @@ Run this list immediately before submitting on 6 May:
 4. Export the Google Doc → `report_PG##.pdf`. Check title page and page numbering.
 5. Upload **both files** to SurreyLearn (PDF separate from ZIP per the brief).
 6. Take a screenshot of the SurreyLearn submission confirmation and post it in the group chat.
+
