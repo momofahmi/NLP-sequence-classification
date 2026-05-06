@@ -25,7 +25,6 @@ class VocabularyAnalysis:
     # 1. Build per-variety vocabularies
     
     def build_vocabularies(self) -> dict[str, set]:
-        """Build a set of unique lowercased tokens for each variety."""
         for variety in self.varieties:
             texts = self.df[self.df[self.variety_col] == variety][self.text_col]
             tokens = set(
@@ -50,7 +49,6 @@ class VocabularyAnalysis:
         return len(set_a & set_b) / len(set_a | set_b)
 
     def compute_jaccard_matrix(self) -> pd.DataFrame:
-        """Compute pairwise Jaccard similarity between all variety pairs."""
         if not self.vocab_per_variety:
             self.build_vocabularies()
 
@@ -86,10 +84,6 @@ class VocabularyAnalysis:
     # 3. TF-IDF cosine similarity
     
     def compute_tfidf_cosine_matrix(self) -> pd.DataFrame:
-        """
-        Concatenate all texts per variety into one document,
-        fit TF-IDF, then compute cosine similarity between variety documents.
-        """
         variety_docs = []
         for v in self.varieties:
             texts = self.df[self.df[self.variety_col] == v][self.text_col].dropna()
@@ -120,7 +114,6 @@ class VocabularyAnalysis:
     
     def plot_similarity_heatmap(self, df_jac: pd.DataFrame,
                                  df_cos: pd.DataFrame, save: bool = True):
-        """Side-by-side heatmaps for Jaccard and TF-IDF cosine similarity."""
         fig, axes = plt.subplots(1, 2, figsize=(12, 4))
 
         for ax, df_sim, title in zip(
@@ -148,21 +141,23 @@ class VocabularyAnalysis:
 
         if save:
             path = os.path.join(self.figures_path, 'vocabulary_similarity_heatmap.png')
+            
             plt.savefig(path, dpi=150, bbox_inches='tight')
-            print(f"\n✅ Heatmap saved to: {path}")
+            print(f"\nHeatmap saved to: {path}")
 
         plt.show()
 
     # 5. Run full analysis
    
     def run(self, save: bool = True):
-        print("=" * 55)
+
         print("VOCABULARY ANALYSIS")
-        print("=" * 55)
 
         self.build_vocabularies()
         df_jac = self.compute_jaccard_matrix()
-        df_cos = self.compute_tfidf_cosine_matrix()
-        self.plot_similarity_heatmap(df_jac, df_cos, save=save)
+        df_cos=self.compute_tfidf_cosine_matrix()
+        
+        self.plot_similarity_heatmap(df_jac, df_cos, 
+                                     save=save)
 
         return df_jac, df_cos, self.vocab_per_variety
