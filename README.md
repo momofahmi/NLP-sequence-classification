@@ -17,7 +17,7 @@ ds = load_dataset("surrey-nlp/BESSTIE-CW-26")
 
 A `.env` file at the project root is required for HuggingFace authentication.
 
-**`main_notebook.ipynb` must stay at the repository root.**
+**`main.ipynb` must stay at the repository root.**
 
 ---
 
