@@ -1,0 +1,142 @@
+{
+  "by_seed": {
+    "seed_42": {
+      "uk_only": {
+        "macro_f1": 0.7192,
+        "precision": 0.6817,
+        "recall": 0.7963,
+        "per_class_f1": [
+          0.9418326693227091,
+          0.496551724137931
+        ],
+        "confusion_matrix": [
+          [
+            591,
+            56
+          ],
+          [
+            17,
+            36
+          ]
+        ],
+        "report": "               precision    recall  f1-score   support\n\nNot Sarcastic       0.97      0.91      0.94       647\n    Sarcastic       0.39      0.68      0.50        53\n\n     accuracy                           0.90       700\n    macro avg       0.68      0.80      0.72       700\n weighted avg       0.93      0.90      0.91       700\n"
+      },
+      "au_only": {
+        "macro_f1": 0.7509,
+        "precision": 0.7621,
+        "recall": 0.7426,
+        "per_class_f1": [
+          0.8621761658031089,
+          0.6395663956639567
+        ],
+        "confusion_matrix": [
+          [
+            416,
+            55
+          ],
+          [
+            78,
+            118
+          ]
+        ],
+        "report": "               precision    recall  f1-score   support\n\nNot Sarcastic       0.84      0.88      0.86       471\n    Sarcastic       0.68      0.60      0.64       196\n\n     accuracy                           0.80       667\n    macro avg       0.76      0.74      0.75       667\n weighted avg       0.80      0.80      0.80       667\n"
+      },
+      "in_only": {
+        "macro_f1": 0.6058,
+        "precision": 0.5971,
+        "recall": 0.6176,
+        "per_class_f1": [
+          0.9396151293961513,
+          0.272
+        ],
+        "confusion_matrix": [
+          [
+            708,
+            52
+          ],
+          [
+            39,
+            17
+          ]
+        ],
+        "report": "               precision    recall  f1-score   support\n\nNot Sarcastic       0.95      0.93      0.94       760\n    Sarcastic       0.25      0.30      0.27        56\n\n     accuracy                           0.89       816\n    macro avg       0.60      0.62      0.61       816\n weighted avg       0.90      0.89      0.89       816\n"
+      }
+    },
+    "seed_123": {
+      "uk_only": {
+        "macro_f1": 0.75,
+        "precision": 0.7067,
+        "recall": 0.8372,
+        "per_class_f1": [
+          0.9482071713147411,
+          0.5517241379310345
+        ],
+        "confusion_matrix": [
+          [
+            595,
+            52
+          ],
+          [
+            13,
+            40
+          ]
+        ],
+        "report": "               precision    recall  f1-score   support\n\nNot Sarcastic       0.98      0.92      0.95       647\n    Sarcastic       0.43      0.75      0.55        53\n\n     accuracy                           0.91       700\n    macro avg       0.71      0.84      0.75       700\n weighted avg       0.94      0.91      0.92       700\n"
+      },
+      "au_only": {
+        "macro_f1": 0.7371,
+        "precision": 0.7571,
+        "recall": 0.725,
+        "per_class_f1": [
+          0.8600612870275791,
+          0.6140845070422535
+        ],
+        "confusion_matrix": [
+          [
+            421,
+            50
+          ],
+          [
+            87,
+            109
+          ]
+        ],
+        "report": "               precision    recall  f1-score   support\n\nNot Sarcastic       0.83      0.89      0.86       471\n    Sarcastic       0.69      0.56      0.61       196\n\n     accuracy                           0.79       667\n    macro avg       0.76      0.72      0.74       667\n weighted avg       0.79      0.79      0.79       667\n"
+      },
+      "in_only": {
+        "macro_f1": 0.6117,
+        "precision": 0.6048,
+        "recall": 0.6202,
+        "per_class_f1": [
+          0.9424222369291859,
+          0.2809917355371901
+        ],
+        "confusion_matrix": [
+          [
+            712,
+            48
+          ],
+          [
+            39,
+            17
+          ]
+        ],
+        "report": "               precision    recall  f1-score   support\n\nNot Sarcastic       0.95      0.94      0.94       760\n    Sarcastic       0.26      0.30      0.28        56\n\n     accuracy                           0.89       816\n    macro avg       0.60      0.62      0.61       816\n weighted avg       0.90      0.89      0.90       816\n"
+      }
+    }
+  },
+  "averaged": {
+    "uk_only": {
+      "macro_f1_mean": 0.7346,
+      "macro_f1_std": 0.0154
+    },
+    "au_only": {
+      "macro_f1_mean": 0.744,
+      "macro_f1_std": 0.0069
+    },
+    "in_only": {
+      "macro_f1_mean": 0.6088,
+      "macro_f1_std": 0.003
+    }
+  }
+}

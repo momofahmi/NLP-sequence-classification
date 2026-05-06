@@ -41,11 +41,8 @@ class LinguisticFeatureAnalysis:
         self.save_path = save_path
         self.figures_path = os.path.join(save_path, 'figures')
         os.makedirs(self.figures_path, exist_ok=True)
-
         self._extract_features()
                    
-    # Feature extraction helpers
-  
     def _extract_features(self):
         txt = self.df[self.text_col].fillna('').astype(str)
 
@@ -140,7 +137,7 @@ class LinguisticFeatureAnalysis:
         if save:
             path = os.path.join(self.figures_path, 'linguistic_features_sarcasm.png')
             plt.savefig(path, dpi=150, bbox_inches='tight')
-            print(f"\n✅ Figure saved to: {path}")
+            print(f"\nFigure saved to: {path}")
         plt.show()
 
     
@@ -158,9 +155,7 @@ class LinguisticFeatureAnalysis:
                 all_words[w] = all_words.get(w, 0) + 1
         total_all = sum(all_words.values())
 
-        print("\n" + "=" * 55)
         print("VARIETY-SPECIFIC TERM EXTRACTION")
-        print("=" * 55)
 
         for variety in sorted(varieties):
             subset = self.df[self.df[self.variety_col] == variety][self.text_col]
@@ -194,15 +189,14 @@ class LinguisticFeatureAnalysis:
             variety_term_dfs[variety] = df_terms
 
             print(f"\nTop {top_n} distinctive terms for {variety}:")
-            print(df_terms[['term', 'count_in_variety', 'distinctiveness_ratio',
-                             'is_seed_term']].to_string(index=False))
+            print(df_terms[['term', 'count_in_variety', 'distinctiveness_ratio','is_seed_term']].to_string(index=False))
 
             seeds_found = [w for w in VARIETY_SEEDS.get(variety, [])
                            if w in variety_words]
             if seeds_found:
-                print(f"  ✅ Seed terms found: {', '.join(seeds_found)}")
+                print(f" Seed terms found: {', '.join(seeds_found)}")
             else:
-                print(f"  ⚠️  No seed terms found for {variety} "
+                print(f" No seed terms found for {variety} "
                       f"(may be present in different form)")
 
             if save:
@@ -210,7 +204,7 @@ class LinguisticFeatureAnalysis:
                     self.save_path, f'variety_terms_{variety.replace("-","_")}.csv'
                 )
                 df_terms.to_csv(csv_path, index=False)
-                print(f"  ✅ Saved to: {csv_path}")
+                print(f"Saved to: {csv_path}")
 
         return variety_term_dfs
   
@@ -238,8 +232,7 @@ class LinguisticFeatureAnalysis:
                 (sub['feat_punct_density'] >= punct_threshold)
             ].head(n_per_variety // 2)
 
-            for df_sub, reason in [(sarc_positive, 'sarcastic+positive'),
-                                   (high_punct_not_sarc, 'high-punct+non-sarcastic')]:
+            for df_sub, reason in [(sarc_positive, 'sarcastic+positive'), (high_punct_not_sarc, 'high-punct+non-sarcastic')]:
                 for _, row in df_sub.iterrows():
                     tricky_rows.append({
                         'variety': variety,
@@ -251,10 +244,8 @@ class LinguisticFeatureAnalysis:
                     })
 
         df_tricky = pd.DataFrame(tricky_rows)
-
-        print(f"\n{'='*55}")
+                                   
         print("ERROR ANALYSIS PREP — tricky cases")
-        print(f"{'='*55}")
         for variety in sorted(df_tricky['variety'].unique()):
             sub = df_tricky[df_tricky['variety'] == variety]
             print(f"\n{variety} ({len(sub)} cases):")
@@ -263,15 +254,17 @@ class LinguisticFeatureAnalysis:
 
         if save:
             csv_path = os.path.join(self.save_path, 'tricky_cases_error_analysis.csv')
+            
             df_tricky.to_csv(csv_path, index=False)
-            print(f"\n✅ Tricky cases saved to: {csv_path}")
+            print(f"\nTricky cases saved to: {csv_path}")
 
         return df_tricky
    
     # 4. Run full analysis
 
     def run(self, save: bool = True):
-        df_compare = self.compare_sarcasm_features(save=save)
-        variety_terms = self.extract_variety_terms(save=save)
-        df_tricky = self.identify_tricky_cases(save=save)
+        df_compare =self.compare_sarcasm_features(save=save)
+        
+        variety_terms=self.extract_variety_terms(save=save)
+        df_tricky= self.identify_tricky_cases(save=save)
         return df_compare, variety_terms, df_tricky
