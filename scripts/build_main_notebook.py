@@ -809,12 +809,21 @@ and pull a fresh batch.'''))
 
 cells.append(code(r'''# Build / refresh the curated q4_errors.json from the 10 examples discussed
 # in section 4 of the report. Loads only the dataset (no model needed).
+build_script = Path("scripts/q4_build_curated_errors.py")
 if RUN_ERROR_ANALYSIS:
-    %run scripts/q4_build_curated_errors.py
-    # Alternative: re-run the actual OPT-1.3B + en-AU adapter to pick a fresh
-    # batch of errors. Slow (~5 min on a T4) and the picks vary slightly per
-    # transformers/peft version, so we default to the curated build above.
-    # %run scripts/q4_extract_errors.py
+    if build_script.exists():
+        %run scripts/q4_build_curated_errors.py
+        # Alternative: re-run the actual OPT-1.3B + en-AU adapter to pick a
+        # fresh batch of errors. Slow (~5 min on a T4) and the picks vary
+        # slightly per transformers/peft version, so we default to the
+        # curated build above.
+        # %run scripts/q4_extract_errors.py
+    else:
+        print(f"{build_script} not found. The committed file in "
+              "reports/results/q4_errors.json is the same data, so you can "
+              "set RUN_ERROR_ANALYSIS=False and continue. "
+              "If you want to regenerate it, pull the latest version of the "
+              "repo (`!git pull` on Colab) and re-run this cell.")
 else:
     print("Skipping error extraction (RUN_ERROR_ANALYSIS=False). "
           "Using committed reports/results/q4_errors.json.")
@@ -851,8 +860,12 @@ if errors_path.exists():
         1 for e in payload.get("examples", []) if e.get("explanation", "").strip()
     )
 
-if RUN_ERROR_ANALYSIS and n_explained >= 4:
+few_shot_script = Path("scripts/q4_few_shot_eval.py")
+if RUN_ERROR_ANALYSIS and n_explained >= 4 and few_shot_script.exists():
     %run scripts/q4_few_shot_eval.py --in reports/results/q4_errors.json
+elif RUN_ERROR_ANALYSIS and n_explained >= 4:
+    print(f"{few_shot_script} not found - run `!git pull` to fetch the "
+          "latest version of the repo and re-run this cell.")
 elif RUN_ERROR_ANALYSIS and errors_path.exists():
     print(f"Found {n_explained}/4 explained examples in {errors_path}.")
     print("Open the file, add a one-paragraph `explanation` to any 4 of the 10 "
@@ -867,9 +880,13 @@ else:
 '''))
 
 cells.append(code(r'''# # LIME token-importance explanations for the 4 explained errors.
-if RUN_LIME and n_explained >= 1:
+lime_script = Path("scripts/lime_explain.py")
+if RUN_LIME and n_explained >= 1 and lime_script.exists():
     Path("reports/figures/lime").mkdir(parents=True, exist_ok=True)
     %run scripts/lime_explain.py --model lora --in reports/results/q4_errors.json --out-dir reports/figures/lime/
+elif RUN_LIME and n_explained >= 1:
+    print(f"{lime_script} not found - run `!git pull` to fetch the latest "
+          "version of the repo and re-run this cell.")
 elif RUN_LIME and errors_path.exists():
     print("LIME explains entries whose `explanation` field is non-empty. "
           "None found in q4_errors.json yet, so nothing to plot.")
@@ -901,8 +918,12 @@ cells.append(md(r'''### 5.2 Efficiency benchmark
 
 20 timed forward passes after a 3-run GPU warm-up. Writes `reports/results/q5_2_efficiency.json`.'''))
 
-cells.append(code(r'''if RUN_BENCHMARK:
+cells.append(code(r'''benchmark_script = Path("scripts/benchmark_inference.py")
+if RUN_BENCHMARK and benchmark_script.exists():
     %run scripts/benchmark_inference.py
+elif RUN_BENCHMARK:
+    print(f"{benchmark_script} not found - run `!git pull` to fetch the "
+          "latest version of the repo and re-run this cell.")
 else:
     print("Skipping efficiency benchmark (RUN_BENCHMARK=False).")
 '''))
