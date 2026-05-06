@@ -78,7 +78,7 @@ class EDA:
 
         if highlight:
             r, c = highlight
-            rectangle=plt.Rectangle((c, r), 1, 1, fill=False, edgecolor='cyan', lw=2.5, ls='--')
+            rectangle=plt.Rectangle((c, r), 1, 1, fill=False, edgecolor='red', lw=5, ls='-')
             ax.add_patch(rectangle)
         plt.title(title,  pad=15)
         plt.tight_layout()
@@ -177,7 +177,7 @@ class EDA:
 
 
     def sentiment_imbalance(self):
-        self.df_all["Sarcasm"] = self.df_all["Sentiment"].astype(int)
+        self.df_all["Sentiment"] = self.df_all["Sentiment"].astype(int)
         overall=self.df_all["Sentiment"].value_counts(normalize=True) * 100
         per_variety = pd.crosstab(self.df_all["variety"], self.df_all["Sentiment"], normalize="index") * 100
 
@@ -277,7 +277,16 @@ class EDA:
             'found_patterns': matched,
             'pattern_counts': pattern_counts
         }, examples_by_variety
+        
+    def sarcasm_by_source(self):
+        tab = pd.crosstab(self.df_all["source"], self.df_all["Sarcasm"])
+        return tab
 
+    def sentiment_by_source(self):
+        cb_table = pd.crosstab(
+            self.df_all["source"], 
+            self.df_all["Sentiment"])
+        return cb_table
 
     def save_figure(self, save_path="./reports/figures", filename="plot.png"):
         folder = Path(save_path)
