@@ -1,0 +1,119 @@
+{
+  "task": "Sarcasm",
+  "base_llm": "facebook/opt-1.3b",
+  "n_total_errors": 131,
+  "n_selected": 10,
+  "examples": [
+    {
+      "idx": 142,
+      "text": "It's great, barely any customers and the cinemas are always empty.",
+      "variety": "en-AU",
+      "source": "Reddit",
+      "gold": 1,
+      "pred": 0,
+      "task": "Sarcasm",
+      "adapter": "momofahmi/besstie-lora-en-au-opt-1.3b",
+      "explanation": "Sarcastic. The first clause 'It's great' is positive on the surface but is immediately undercut by 'barely any customers and the cinemas are always empty', which makes the positive evaluation absurd. The cue is an inter-clause incongruity rather than any single token: a model that reads 'great' on its own (as TF-IDF or a non-contextual model would) predicts not sarcastic. OPT-1.3B + LoRA still falls into this trap because the adapter is small and the training set has few en-AU examples of this construction."
+    },
+    {
+      "idx": 302,
+      "text": "We recently spent a fair bit of money on a very nice dining table and sturdy comfortable dining chairs... So to answer your question we eat on the lounge watching our stories.",
+      "variety": "en-AU",
+      "source": "Reddit",
+      "gold": 1,
+      "pred": 0,
+      "task": "Sarcasm",
+      "adapter": "momofahmi/besstie-lora-en-au-opt-1.3b",
+      "explanation": "Sarcastic. The setup ('we recently spent a fair bit of money on a very nice dining table and sturdy comfortable dining chairs') is contradicted by the punchline ('we eat on the lounge watching our stories'). 'So to answer your question' is a discourse marker that signals the punchline. The contradiction lives across multiple sentences, which is hard for a model trained on 128-token windows and short Reddit comments. The Australian colloquial 'lounge' (= sofa) does not help either."
+    },
+    {
+      "idx": 508,
+      "text": "Not a shill mate. Just someone that's pissed off his rent has increased by 50% since 2020.",
+      "variety": "en-AU",
+      "source": "Reddit",
+      "gold": 0,
+      "pred": 1,
+      "task": "Sarcasm",
+      "adapter": "momofahmi/besstie-lora-en-au-opt-1.3b",
+      "explanation": "Not sarcastic. The speaker is making a sincere first-person complaint about a 50% rent increase since 2020 and explicitly denies being a shill ('Not a shill mate'). Reddit-style colloquial register and emphatic punctuation can fool a model that has learned 'angry tone == sarcasm', but here the angry tone matches the literal grievance, not an ironic one. The Australian 'mate' adds register noise without changing the literal meaning."
+    },
+    {
+      "idx": 618,
+      "text": "5 weeks of annual leave is standard for shift workers.\nThe other 4 weeks are usually ADOs from working shifts above the standard 38 hour week.\nIt's a pretty shit gig.\nThey get spat on, punched, and kicked.\nThey see murders, assaults and the worst of humanity.\nOn top of that, they have to make split-second decisions while everyone else gets 10 months to tear it apart\nYou get shat on by the community, management, and the government when something you had 2 seconds to decide in the heat of the moment.",
+      "variety": "en-AU",
+      "source": "Reddit",
+      "gold": 0,
+      "pred": 1,
+      "task": "Sarcasm",
+      "adapter": "momofahmi/besstie-lora-en-au-opt-1.3b",
+      "explanation": "Not sarcastic. The text is purely factual: it states that 5 weeks of annual leave is standard for shift workers and the other 4 weeks are usually ADOs (Accrued Days Off, an Australian-specific term). There is no contradiction, no exaggeration, and no evaluative language. The matter-of-fact register and the unfamiliar acronym are easy to misread as deadpan irony, which is what the model does here."
+    },
+    {
+      "idx": 264,
+      "text": "If the pain is unbearable you need to go to a hospital, it will be free",
+      "variety": "en-AU",
+      "source": "Reddit",
+      "gold": 1,
+      "pred": 0,
+      "task": "Sarcasm",
+      "adapter": "momofahmi/besstie-lora-en-au-opt-1.3b",
+      "explanation": ""
+    },
+    {
+      "idx": 523,
+      "text": "The line is incredibly long. Expect to wait an hour if you go after 10 pm. Also they cutoff their custom cocktails 40-50 minutes and sometimes an hour before they close at 1 am, so basically when they choose, because of some rule they could n't explain thoroughly to me. It's weird cause they still offer hard liquor drinks at 11AUD per pour. Does n't make sense. The vibe here is decent. I'd say this spot is best for a day party. They have different DJs and an accepting, open vibe where everyone is accepted no matter race, religion, or orientation. Everyone just wants to listen to good music or makeout haha Note: They wo n't let people in 30min before close and the bar is petty much open air with a rooftop so it's subject to the weather.",
+      "variety": "en-AU",
+      "source": "Google",
+      "gold": 1,
+      "pred": 0,
+      "task": "Sarcasm",
+      "adapter": "momofahmi/besstie-lora-en-au-opt-1.3b",
+      "explanation": ""
+    },
+    {
+      "idx": 657,
+      "text": "I was meaning there isn't a medication for autism that will'fix' it, compared to adhd.\nAlthough, some antidepressants or diazepam meds help with anxiety that can arise due to autism (Valium is great lol, I wish it wasn't addictive).",
+      "variety": "en-AU",
+      "source": "Reddit",
+      "gold": 1,
+      "pred": 0,
+      "task": "Sarcasm",
+      "adapter": "momofahmi/besstie-lora-en-au-opt-1.3b",
+      "explanation": ""
+    },
+    {
+      "idx": 256,
+      "text": "For once, I kind of agree with the North Shore NIMBYs. Sydney has enough people. We're already packed like sardines, schools are overflowing and traffic is fucked. I understand the desire to build closer to the city, but people need to suck it up and go further west. And I say this as a person who lives out west. There's plenty of space out here. As long as they build the infrastructure to accommodate the extra people, I'm happy. \nBut the idea of a few extra thousand people commuting over the Spit Bridge every morning is terrifying.",
+      "variety": "en-AU",
+      "source": "Reddit",
+      "gold": 0,
+      "pred": 1,
+      "task": "Sarcasm",
+      "adapter": "momofahmi/besstie-lora-en-au-opt-1.3b",
+      "explanation": ""
+    },
+    {
+      "idx": 395,
+      "text": "When will the internet stop being racist? Is that really your question?",
+      "variety": "en-AU",
+      "source": "Reddit",
+      "gold": 0,
+      "pred": 1,
+      "task": "Sarcasm",
+      "adapter": "momofahmi/besstie-lora-en-au-opt-1.3b",
+      "explanation": ""
+    },
+    {
+      "idx": 492,
+      "text": "By never telling us where she's from!",
+      "variety": "en-AU",
+      "source": "Reddit",
+      "gold": 0,
+      "pred": 1,
+      "task": "Sarcasm",
+      "adapter": "momofahmi/besstie-lora-en-au-opt-1.3b",
+      "explanation": ""
+    }
+  ],
+  "_provenance": "Built by scripts/q4_build_curated_errors.py from the 10 en-AU test examples discussed in section 4 of the report. Indices are positions in the en-AU-only filter of surrey-nlp/BESSTIE-CW-26 test split."
+}

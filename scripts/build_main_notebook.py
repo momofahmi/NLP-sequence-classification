@@ -798,29 +798,46 @@ Best adapter is OPT-1.3B + en-AU (highest Sarcastic-F1 in Section 3.4). Steps:
 
 1. extract 10 high-confidence misclassifications from the en-AU test set,
 2. write explanations for 4 of them (2 FPs, 2 FNs),
-3. build a 4-shot prompt and re-test the remaining 6 with `meta-llama/Llama-3.2-1B-Instruct`.'''))
+3. build a 4-shot prompt and re-test the remaining 6 with `meta-llama/Llama-3.2-1B-Instruct`.
 
-cells.append(code(r'''# Step 1 - extract 10 representative errors with the adapter
-# (downloads OPT-1.3B + en-AU LoRA adapter, runs inference on en-AU test set)
+`reports/results/q4_errors.json` is committed to the repo with the 10
+specific examples discussed in the report (4 explained, 6 held-out).
+With `RUN_ERROR_ANALYSIS=True`, the cell below regenerates the same file
+from the dataset using `scripts/q4_build_curated_errors.py`. Switch to
+`scripts/q4_extract_errors.py` (commented out) to re-run the actual model
+and pull a fresh batch.'''))
+
+cells.append(code(r'''# Build / refresh the curated q4_errors.json from the 10 examples discussed
+# in section 4 of the report. Loads only the dataset (no model needed).
 if RUN_ERROR_ANALYSIS:
-    %run scripts/q4_extract_errors.py
+    %run scripts/q4_build_curated_errors.py
+    # Alternative: re-run the actual OPT-1.3B + en-AU adapter to pick a fresh
+    # batch of errors. Slow (~5 min on a T4) and the picks vary slightly per
+    # transformers/peft version, so we default to the curated build above.
+    # %run scripts/q4_extract_errors.py
 else:
     print("Skipping error extraction (RUN_ERROR_ANALYSIS=False). "
-          "Pre-computed results already in reports/results/q4_errors.json.")
+          "Using committed reports/results/q4_errors.json.")
 '''))
 
-cells.append(code(r'''# # load the cached errors file
+cells.append(code(r'''# # load the curated errors file
 errors_path = Path("reports/results/q4_errors.json")
 if errors_path.exists():
     payload = json.load(open(errors_path))
-    # q4_extract_errors.py writes {"task": ..., "examples": [...], ...}
     examples = payload["examples"] if isinstance(payload, dict) else payload
-    print(f"Loaded {len(examples)} extracted errors "
-          f"(out of {payload.get('n_total_errors', '?')} total misclassifications). "
-          f"First example:")
-    print(json.dumps(examples[0], indent=2, ensure_ascii=False))
+    n_explained = sum(1 for e in examples if e.get("explanation", "").strip())
+    print(f"Loaded {len(examples)} examples "
+          f"({n_explained} with explanations, "
+          f"{len(examples) - n_explained} held-out for the few-shot test). "
+          "First explained example:")
+    explained = next((e for e in examples if e.get("explanation", "").strip()), examples[0])
+    preview = {k: v for k, v in explained.items() if k != "prompt_used"}
+    if "explanation" in preview and len(preview["explanation"]) > 250:
+        preview["explanation"] = preview["explanation"][:240] + "..."
+    print(json.dumps(preview, indent=2, ensure_ascii=False))
 else:
-    print("Run with RUN_ERROR_ANALYSIS=True to populate reports/results/q4_errors.json")
+    print("q4_errors.json not found. Run with RUN_ERROR_ANALYSIS=True to "
+          "build it from the 10 examples in the report.")
 '''))
 
 cells.append(code(r'''# # few-shot eval on the 6 held-out errors with a small instruction-tuned judge.
