@@ -509,7 +509,6 @@ cells.append(code(r'''ROBERTA_RESULTS_DIR = Path(
 print(f"Loading RoBERTa results from {ROBERTA_RESULTS_DIR}")
 
 ROBERTA_CONDITIONS  = ["uk_only", "au_only", "in_only", "inner_pool", "all"]
-ROBERTA_TEST_NAMES  = ["uk_only", "au_only", "in_only"]   # weighted_results uses the same key for test sets
 ROBERTA_DISPLAY     = ["UK only", "AU only", "IN only", "Inner pool", "All pool"]
 TEST_DISPLAY        = ["Test UK", "Test AU", "Test IN"]
 
@@ -519,6 +518,18 @@ for cond in ROBERTA_CONDITIONS:
     if p.exists():
         roberta_results[cond] = json.load(open(p))
 print("Conditions loaded:", list(roberta_results.keys()))
+
+# Auto-detect the test-set key naming. Joel's saved JSONs use
+# uk_only/au_only/in_only; a fresh rerun via get_test_conditions(ds) uses
+# uk_test/au_test/in_test. Either is fine.
+sample_keys = list(roberta_results[ROBERTA_CONDITIONS[0]]["averaged"].keys())
+if all(k in sample_keys for k in ["uk_only", "au_only", "in_only"]):
+    ROBERTA_TEST_NAMES = ["uk_only", "au_only", "in_only"]
+elif all(k in sample_keys for k in ["uk_test", "au_test", "in_test"]):
+    ROBERTA_TEST_NAMES = ["uk_test", "au_test", "in_test"]
+else:
+    ROBERTA_TEST_NAMES = sample_keys[:3]
+print("Test-set keys:", ROBERTA_TEST_NAMES)
 
 # Cross-variety matrix (5 train conditions x 3 test sets)
 matrix = np.array([
@@ -759,10 +770,12 @@ Cross-task and per-variety summary from the JSONs loaded above. No new training 
 cells.append(code(r'''# Per-variety summary
 rows = []
 lr_pivot = per_var_lr[per_var_lr["task"] == "sarcasm"].set_index("variety")["macro_f1"]
+# Use whichever test-key naming the loaded JSONs happen to use
+_test_key_for = dict(zip(["en-UK", "en-AU", "en-IN"], ROBERTA_TEST_NAMES))
 for var in VARIETIES:
     row = {"variety": var}
     row["LR sarcasm"] = float(lr_pivot.get(var, float("nan")))
-    var_short = {"en-UK": "uk_only", "en-AU": "au_only", "en-IN": "in_only"}[var]
+    var_short = _test_key_for[var]
     row["RoBERTa all-pool sarcasm"] = roberta_results["all"]["averaged"][var_short]["macro_f1_mean"]
     if lora_results and "macro_f1" in lora_results:
         mean_mat = lora_results["macro_f1"]["mean_over_seeds"]
