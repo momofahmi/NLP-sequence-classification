@@ -98,9 +98,11 @@ cells.append(code('''import os, sys, subprocess, importlib, pathlib
 IN_COLAB = "google.colab" in sys.modules
 
 if IN_COLAB:
-    REPO_URL  = "https://github.com/momofahmi/NLP-sequence-classification.git"
-    REPO_DIR  = "/content/NLP-sequence-classification"
-    BRANCH    = "main"
+    # Public mirror of Fiyin's pipeline branch — anyone can clone without auth.
+    # Override these by setting REPO_URL / REPO_BRANCH as env vars before running.
+    REPO_URL  = os.environ.get("REPO_URL", "https://github.com/TheFinix13/NLP-coursework.git")
+    BRANCH    = os.environ.get("REPO_BRANCH", "main")
+    REPO_DIR  = "/content/NLP-coursework"
     if not os.path.exists(REPO_DIR):
         subprocess.run(["git", "clone", "-b", BRANCH, REPO_URL, REPO_DIR], check=True)
     os.chdir(REPO_DIR)
