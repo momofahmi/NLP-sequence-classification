@@ -705,9 +705,13 @@ else:
 # # load the cached errors file
 errors_path = Path("reports/results/q4_errors.json")
 if errors_path.exists():
-    errors = json.load(open(errors_path))
-    print(f"Loaded {len(errors)} extracted errors. First example:")
-    print(json.dumps(errors[0], indent=2))
+    payload = json.load(open(errors_path))
+    # q4_extract_errors.py writes {"task": ..., "examples": [...], ...}
+    examples = payload["examples"] if isinstance(payload, dict) else payload
+    print(f"Loaded {len(examples)} extracted errors "
+          f"(out of {payload.get('n_total_errors', '?')} total misclassifications). "
+          f"First example:")
+    print(json.dumps(examples[0], indent=2, ensure_ascii=False))
 else:
     print("Run with RUN_ERROR_ANALYSIS=True to populate reports/results/q4_errors.json")
 
