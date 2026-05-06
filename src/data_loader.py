@@ -14,25 +14,18 @@ def get_variety_split(ds, variety: str, split: str):
 
 #Yusrah - 30/03/2026
 def get_BESSTIE_splits():
-  #ds = load_dataset("surrey-nlp/BESSTIE-CW-26")
-  ds = load_besstie() #using your function defined above
-
-  #converting the splits to pandas dataframe
+  ds = load_besstie() 
   df_train = ds["train"].to_pandas()
   df_val = ds["validation"].to_pandas()
   df_test = ds["test"].to_pandas()
 
-  #adding a split column to preserve which rows came from which split
   df_train["split"] = "train"
   df_val["split"] = "validation"
   df_test["split"] = "test"
-  #concatenating all splits into a full dataset for analysis/visualization purposes
+
   df_all = pd.concat([df_train, df_val, df_test], ignore_index=True)
 
   return df_all, df_train, df_val,df_test
-
-#To use this function, simply call
-#df_all, df_train, df_val,df_test = get_BESSTIE_splits()
 
 def get_all_varieties(ds, split: str):
     "Returns train, test, validation split for all varieties"
